@@ -10,8 +10,8 @@ Harness coverage went from 30 to 92 out of 100, level 0 to 2 (self-checking). Th
 
 | Gate | Command | Result | Tests |
 | --- | --- | --- | --- |
-| fast | `make check-fast` | pass | 612 tests, 27 skipped |
-| full | `make check` | pass | 612 tests, 27 skipped |
+| fast | `make check-fast` | pass | 617 tests, 27 skipped |
+| full | `make check` | pass | 617 tests, 27 skipped |
 
 Before the harness, the project's tests could not be measured: `./gradlew test` ran no test (exit 1). This says nothing about whether the tests pass, and the gates could not be compared with a starting point.
 4 test files only compare literals (for example `assert True`) and protect nothing: `src/test/java/org/traccar/forward/PositionForwarderUrlTest.java`, `src/test/java/org/traccar/handler/events/IgnitionEventHandlerTest.java`, `src/test/java/org/traccar/helper/LogTest.java`, `src/test/java/org/traccar/protocol/IotmProtocolEncoderTest.java`.
@@ -52,6 +52,25 @@ GET /api/health (src/main/java/org/traccar/api/resource/HealthResource.java) is 
 
 Run it with `npx uw-harness prove`: an agent does the task with the harness, on its own branch, and the result is added to this page.
 
+## Pilot result: Add unit tests for HealthResource
+
+Run by claude on 2026-11-01, on branch `uw-harness/prove-20261101-1736`, in 2 minutes.
+
+- Agent status: **done**. Acceptance criteria met, as reported by the agent: 4 of 4.
+- Gates after the task: pass. Tests before: 612 tests, 27 skipped. After: 617 tests, 27 skipped.
+- Fix rounds after a gate failed: 0. Questions only a human could answer: 0.
+- Unattended (done, gates pass, every requested criterion met, no question for a human): **yes**.
+  - met: src/test/java/org/traccar/api/resource/HealthResourceTest.java exists and runs with make test TESTS=org.traccar.api.resource.HealthResourceTest. make test TESTS=org.traccar.api.resource.HealthResourceTest -> 'Tests run: 5, Failures: 0, Errors: 0, Skipped: 0', BUILD SUCCESSFUL
+  - met: Tests cover: 200 OK when storage answers, 500 when storage throws StorageException, 500 when stored messages drop below the configured threshold, 200 when no threshold is set. testOkWhenStorageAnswers, testErrorWhenStorageThrows, testErrorWhenMessagesDropBelowThreshold (threshold 0.5, intervals 100 then 10), testOkWhenNoThreshold (threshold 0.0, same drop); also testOkWhenMessagesStayAboveThreshold (ratio 0.8)
+  - met: No change to HealthResource.java, or a minimal change justified in the PR description. git diff shows no change to src/main; only the new test and the log entry
+  - met: make check-fast passes. make check-fast -> 'Tests run: 617, Failures: 0, Errors: 0, Skipped: 27', BUILD SUCCESSFUL (first run failed on Checkstyle import order, fixed)
+
+Gaps in the harness that the agent reported:
+
+- `AGENTS.md`: Conventions mention only 'single-class imports'. The import order that Checkstyle enforces (third-party org.*, then java/javax/jakarta, then static, alphabetical, with one blank line between groups) is not documented, so my first check-fast failed with 10 CustomImportOrder errors. Note that main code puts jakarta after org.* with a blank line, which is easy to copy wrongly into a test.
+- `AGENTS.md`: Layout says tests mirror main packages and points to BaseTest, but there is no src/test/java/org/traccar/api package and no example of testing a Jersey resource. A short note on how to unit-test a resource (private @Inject fields, no mockito-junit-jupiter, BaseResource.storage hidden by subclass fields) would save searching.
+- `.agents/skills/implement-change/SKILL.md`: make check-fast output on Checkstyle failure prints only 'violations by severity: [error:10]'; the skill could say the details are in build/reports/checkstyle/test.xml (or main.xml).
+
 ## What this does not prove
 
-It does not prove that agents can work on this repository without supervision. It proves that the knowledge is written down and that the gates run and run tests. No pilot task has been run yet. One task is one data point. Review the branch, answer the open questions, and judge the result yourself.
+It does not prove that agents can work on this repository without supervision. It proves that the knowledge is written down and that the gates run and run tests. One real task went through without help from a human, as reported above. One task is one data point. Review the branch, answer the open questions, and judge the result yourself.

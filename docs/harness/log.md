@@ -105,3 +105,28 @@ Risks seen before the harness:
 - full-gate: Not in any gate: tools/test-integration.py and the other Python tools (they need a running server), and tests on MySQL, PostgreSQL or SQL Server (unit tests use H2 or memory only). Recorded in docs/harness/log.md.
 - local-env: debug.xml points web.path to ./traccar-web/simple, and the server stops at startup when that folder is missing (the submodule is empty in this checkout). make dev works around it with an API-only run (CONFIG_USE_ENVIRONMENT_VARIABLES=true, WEB_PATH=./target/web). The web UI cannot be served locally until the submodule question is answered.
 - fast-gate: This machine has only JDK 17 (default) and Homebrew JDK 25. The gates were verified on JDK 25 through tools/harness/java-home.sh. CI uses Temurin 21. Every Gradle run also needs Maven Central, because build.gradle resolves versions at configuration time.
+
+## 2026-11-01: unit tests for HealthResource
+
+Added `src/test/java/org/traccar/api/resource/HealthResourceTest.java` (5 tests) for `GET /api/health`: 200 when storage answers, 500 when storage throws `StorageException`, 500 when the stored message count drops below `web.healthCheck.dropThreshold`, 200 when it stays above, 200 when no threshold is set. `HealthResource.java` is unchanged. `make check-fast` passes with 617 tests (612 + 5), 0 failures, 27 skipped (the same `@Disabled` tests as before).
+
+Learned:
+
+- `HealthResource` keeps its message counters in static fields, so the test resets them with reflection before each test. The first call after a reset never runs the ratio check (no previous interval), so the threshold tests call `health()` twice.
+- `HealthResource` declares its own `storage` field that hides `BaseResource.storage`. Mockito `@InjectMocks` would be ambiguous here, so the test sets the private fields of `HealthResource` with reflection. There is no `mockito-junit-jupiter` dependency and no existing REST resource test to copy from.
+- Checkstyle import order is third-party (`org.*`), then `java`/`javax`/`jakarta`, then static imports. AGENTS.md says only "single-class imports"; the order is in `gradle/checkstyle.xml` (`CustomImportOrder`).
+
+Left: no test covers the full Jersey stack (`@PermitAll`, path, media type) for `/api/health`; `make dev` plus `curl localhost:8082/api/health` is the manual check.
+
+## 2026-11-01: pilot task done with the harness by claude
+
+**Task:** Add unit tests for HealthResource. GET /api/health (src/main/java/org/traccar/api/resource/HealthResource.java) is what systemd and the Docker healthchecks use to restart Traccar, but it has no test. Add HealthResourceTest covering the database check and the web.healthCheck.dropThreshold message-ratio logic, using Mockito for Config, StatisticsManager and Storage.
+
+I added HealthResourceTest with 5 Mockito-based tests for GET /api/health. They cover the database check (200 when storage answers, 500 on StorageException) and the web.healthCheck.dropThreshold ratio logic (500 below the threshold, 200 above it, 200 when no threshold is set). HealthResource.java is unchanged. The test resets the static message counters and injects the private fields with reflection, because HealthResource.storage hides BaseResource.storage and no @InjectMocks or mockito-junit-jupiter setup exists in the repo. make check-fast passes with 617 tests (612 + 5), 0 failures and the same 27 skipped as before.
+
+- Status reported by the agent: done. Acceptance criteria met: 4 of 4.
+- Gates after the task: pass. Tests before: 612 tests, 27 skipped. After: 617 tests, 27 skipped.
+- Fix rounds after a gate failed: 0. Questions for a human: 0. Unattended: yes.
+- Harness gap: `AGENTS.md`: Conventions mention only 'single-class imports'. The import order that Checkstyle enforces (third-party org.*, then java/javax/jakarta, then static, alphabetical, with one blank line between groups) is not documented, so my first check-fast failed with 10 CustomImportOrder errors. Note that main code puts jakarta after org.* with a blank line, which is easy to copy wrongly into a test.
+- Harness gap: `AGENTS.md`: Layout says tests mirror main packages and points to BaseTest, but there is no src/test/java/org/traccar/api package and no example of testing a Jersey resource. A short note on how to unit-test a resource (private @Inject fields, no mockito-junit-jupiter, BaseResource.storage hidden by subclass fields) would save searching.
+- Harness gap: `.agents/skills/implement-change/SKILL.md`: make check-fast output on Checkstyle failure prints only 'violations by severity: [error:10]'; the skill could say the details are in build/reports/checkstyle/test.xml (or main.xml).

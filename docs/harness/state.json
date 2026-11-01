@@ -2,7 +2,7 @@
   "tool_version": "0.3.0",
   "spec_version": 4,
   "agent": "claude",
-  "updated_at": "2026-11-01T16:36:37.011Z",
+  "updated_at": "2026-11-01T16:38:38.378Z",
   "score": {
     "before": 30,
     "after": 92
@@ -28,10 +28,10 @@
     "fast": {
       "command": "make check-fast",
       "ok": true,
-      "at": "2026-11-01T16:36:37.011Z",
-      "commit": "45ae7321f",
+      "at": "2026-11-01T16:38:38.428Z",
+      "commit": "77d3ce142",
       "tests": {
-        "ran": 612,
+        "ran": 617,
         "skipped": 27,
         "failed": 0
       },
@@ -40,10 +40,10 @@
     "full": {
       "command": "make check",
       "ok": true,
-      "at": "2026-11-01T16:36:37.011Z",
-      "commit": "45ae7321f",
+      "at": "2026-11-01T16:38:38.428Z",
+      "commit": "77d3ce142",
       "tests": {
-        "ran": 612,
+        "ran": 617,
         "skipped": 27,
         "failed": 0
       },
@@ -133,7 +133,77 @@
     "tests": null,
     "note": "ran no test (exit 1)"
   },
-  "proofs": [],
+  "proofs": [
+    {
+      "at": "2026-11-01T16:38:38.378Z",
+      "agent": "claude",
+      "task": {
+        "title": "Add unit tests for HealthResource",
+        "description": "GET /api/health (src/main/java/org/traccar/api/resource/HealthResource.java) is what systemd and the Docker healthchecks use to restart Traccar, but it has no test. Add HealthResourceTest covering the database check and the web.healthCheck.dropThreshold message-ratio logic, using Mockito for Config, StatisticsManager and Storage.",
+        "acceptance": [
+          "src/test/java/org/traccar/api/resource/HealthResourceTest.java exists and runs with make test TESTS=org.traccar.api.resource.HealthResourceTest",
+          "Tests cover: 200 OK when storage answers, 500 when storage throws StorageException, 500 when stored messages drop below the configured threshold, 200 when no threshold is set",
+          "No change to HealthResource.java, or a minimal change justified in the PR description",
+          "make check-fast passes"
+        ]
+      },
+      "branch": "uw-harness/prove-20261101-1736",
+      "status": "done",
+      "acceptance": [
+        {
+          "criterion": "src/test/java/org/traccar/api/resource/HealthResourceTest.java exists and runs with make test TESTS=org.traccar.api.resource.HealthResourceTest",
+          "met": true,
+          "evidence": "make test TESTS=org.traccar.api.resource.HealthResourceTest -> 'Tests run: 5, Failures: 0, Errors: 0, Skipped: 0', BUILD SUCCESSFUL"
+        },
+        {
+          "criterion": "Tests cover: 200 OK when storage answers, 500 when storage throws StorageException, 500 when stored messages drop below the configured threshold, 200 when no threshold is set",
+          "met": true,
+          "evidence": "testOkWhenStorageAnswers, testErrorWhenStorageThrows, testErrorWhenMessagesDropBelowThreshold (threshold 0.5, intervals 100 then 10), testOkWhenNoThreshold (threshold 0.0, same drop); also testOkWhenMessagesStayAboveThreshold (ratio 0.8)"
+        },
+        {
+          "criterion": "No change to HealthResource.java, or a minimal change justified in the PR description",
+          "met": true,
+          "evidence": "git diff shows no change to src/main; only the new test and the log entry"
+        },
+        {
+          "criterion": "make check-fast passes",
+          "met": true,
+          "evidence": "make check-fast -> 'Tests run: 617, Failures: 0, Errors: 0, Skipped: 27', BUILD SUCCESSFUL (first run failed on Checkstyle import order, fixed)"
+        }
+      ],
+      "fix_rounds": 0,
+      "before": {
+        "ran": 612,
+        "skipped": 27,
+        "failed": 0
+      },
+      "after": {
+        "ran": 617,
+        "skipped": 27,
+        "failed": 0
+      },
+      "gates_ok": true,
+      "human_needed": [],
+      "harness_gaps": [
+        {
+          "file": "AGENTS.md",
+          "problem": "Conventions mention only 'single-class imports'. The import order that Checkstyle enforces (third-party org.*, then java/javax/jakarta, then static, alphabetical, with one blank line between groups) is not documented, so my first check-fast failed with 10 CustomImportOrder errors. Note that main code puts jakarta after org.* with a blank line, which is easy to copy wrongly into a test."
+        },
+        {
+          "file": "AGENTS.md",
+          "problem": "Layout says tests mirror main packages and points to BaseTest, but there is no src/test/java/org/traccar/api package and no example of testing a Jersey resource. A short note on how to unit-test a resource (private @Inject fields, no mockito-junit-jupiter, BaseResource.storage hidden by subclass fields) would save searching."
+        },
+        {
+          "file": ".agents/skills/implement-change/SKILL.md",
+          "problem": "make check-fast output on Checkstyle failure prints only 'violations by severity: [error:10]'; the skill could say the details are in build/reports/checkstyle/test.xml (or main.xml)."
+        }
+      ],
+      "skipped_test_files": [],
+      "failed_before": [],
+      "relaxed_checks": [],
+      "duration_s": 116
+    }
+  ],
   "last_run": {
     "skipped_test_files": [],
     "relaxed_checks": [],
