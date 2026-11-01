@@ -1,0 +1,32 @@
+# Optional databases for local development. The default debug.xml uses an embedded H2
+# database in target/ and needs none of this. Use these services only to test schema
+# changes or queries on PostgreSQL or MySQL (see docs/local-dev.md).
+# Start with `make db-up`, stop with `make db-down`. Local credentials only.
+services:
+
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: traccar
+      POSTGRES_USER: traccar
+      POSTGRES_PASSWORD: traccar
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  mysql:
+    image: mysql:lts
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+      MYSQL_DATABASE: traccar
+      MYSQL_USER: traccar
+      MYSQL_PASSWORD: traccar
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+volumes:
+  postgres-data:
+  mysql-data:

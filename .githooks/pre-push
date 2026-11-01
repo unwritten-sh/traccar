@@ -1,0 +1,4 @@
+#!/bin/sh
+# Run the fast gate before every push. Installed by `make setup` (git config core.hooksPath .githooks).
+# Skip once with: git push --no-verify
+exec make check-fast

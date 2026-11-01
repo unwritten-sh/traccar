@@ -1,0 +1,174 @@
+{
+  "tool_version": "0.3.0",
+  "spec_version": 4,
+  "agent": "claude",
+  "updated_at": "2026-11-01T16:36:37.011Z",
+  "score": {
+    "before": 30,
+    "after": 92
+  },
+  "level": {
+    "before": 0,
+    "after": 2
+  },
+  "gates": {
+    "setup": "make setup",
+    "fast": "make check-fast",
+    "full": "make check"
+  },
+  "verified": {
+    "setup": {
+      "command": "make setup",
+      "ok": true,
+      "at": "2026-11-01T16:36:37.011Z",
+      "commit": "45ae7321f",
+      "tests": null,
+      "fingerprint": "ae43157d15ec20c3"
+    },
+    "fast": {
+      "command": "make check-fast",
+      "ok": true,
+      "at": "2026-11-01T16:36:37.011Z",
+      "commit": "45ae7321f",
+      "tests": {
+        "ran": 612,
+        "skipped": 27,
+        "failed": 0
+      },
+      "fingerprint": "ae43157d15ec20c3"
+    },
+    "full": {
+      "command": "make check",
+      "ok": true,
+      "at": "2026-11-01T16:36:37.011Z",
+      "commit": "45ae7321f",
+      "tests": {
+        "ran": 612,
+        "skipped": 27,
+        "failed": 0
+      },
+      "fingerprint": "ae43157d15ec20c3"
+    }
+  },
+  "answers": [],
+  "todos": [
+    {
+      "requirement": "deploy-explicit",
+      "question": "How is the managed hosting (traccar.org pricing) and the demo server deployed and updated: from the Docker images, installers, or another pipeline outside this repository?",
+      "file": "docs/deploy.md"
+    },
+    {
+      "requirement": "deploy-explicit",
+      "question": "Who is allowed to run the 'Build Release' workflow, and how is a bad release rolled back (re-tag, previous Docker tag, schema rollback)?",
+      "file": "docs/deploy.md"
+    },
+    {
+      "requirement": "observability",
+      "question": "For the managed service, where are logs, metrics and alerts kept, and which signal tells you production is broken (only /api/health, or something else)?",
+      "file": "docs/observability.md"
+    },
+    {
+      "requirement": "agreements",
+      "question": "Should outside contributors and agents always open a pull request, while maintainers keep committing directly to master as the history shows?",
+      "file": "CONTRIBUTING.md"
+    },
+    {
+      "requirement": "agreements",
+      "question": "What is the definition of done for a protocol change: is a decoder test with a real device sample always required, and must tools/test-integration.py also pass?",
+      "file": "CONTRIBUTING.md"
+    },
+    {
+      "requirement": "toolchain-pinned",
+      "question": "Which Java version should developers use: 21 (CI and build.gradle) or 25 (release builds and Docker images)? .java-version says 21 for now.",
+      "file": "docs/local-dev.md"
+    },
+    {
+      "requirement": "local-env",
+      "question": "Should local development check out the traccar-web submodule (relative URL ../traccar-web.git), or is the backend usually run without the web UI?",
+      "file": "docs/local-dev.md"
+    }
+  ],
+  "first_task": {
+    "title": "Add unit tests for HealthResource",
+    "description": "GET /api/health (src/main/java/org/traccar/api/resource/HealthResource.java) is what systemd and the Docker healthchecks use to restart Traccar, but it has no test. Add HealthResourceTest covering the database check and the web.healthCheck.dropThreshold message-ratio logic, using Mockito for Config, StatisticsManager and Storage.",
+    "acceptance": [
+      "src/test/java/org/traccar/api/resource/HealthResourceTest.java exists and runs with make test TESTS=org.traccar.api.resource.HealthResourceTest",
+      "Tests cover: 200 OK when storage answers, 500 when storage throws StorageException, 500 when stored messages drop below the configured threshold, 200 when no threshold is set",
+      "No change to HealthResource.java, or a minimal change justified in the PR description",
+      "make check-fast passes"
+    ]
+  },
+  "files": [
+    ".agents/skills/add-protocol-decoder/SKILL.md",
+    ".agents/skills/add-schema-change/SKILL.md",
+    ".agents/skills/debug-local/SKILL.md",
+    ".agents/skills/implement-change/SKILL.md",
+    ".agents/skills/release/SKILL.md",
+    ".claude/skills",
+    ".env.example",
+    ".githooks/pre-push",
+    ".github/workflows/gradle.yml",
+    ".gitignore",
+    ".java-version",
+    "AGENTS.md",
+    "CLAUDE.md",
+    "CONTRIBUTING.md",
+    "Makefile",
+    "compose.yaml",
+    "docs/architecture.md",
+    "docs/decisions/0001-record-architecture-decisions.md",
+    "docs/decisions/0002-one-netty-decoder-per-protocol.md",
+    "docs/decisions/0003-liquibase-schema-for-several-databases.md",
+    "docs/deploy.md",
+    "docs/harness/log.md",
+    "docs/local-dev.md",
+    "docs/observability.md",
+    "docs/product.md",
+    "tools/harness/java-home.sh",
+    "tools/harness/test-summary.gradle"
+  ],
+  "baseline": {
+    "command": "./gradlew test",
+    "ok": false,
+    "tests": null,
+    "note": "ran no test (exit 1)"
+  },
+  "proofs": [],
+  "last_run": {
+    "skipped_test_files": [],
+    "relaxed_checks": [],
+    "review_commit": [],
+    "secrets_added": [],
+    "secrets_in_repo": [
+      {
+        "file": "src/main/java/org/traccar/model/Command.java",
+        "kind": "password or secret"
+      }
+    ],
+    "trivial_test_files": [
+      "src/test/java/org/traccar/forward/PositionForwarderUrlTest.java",
+      "src/test/java/org/traccar/handler/events/IgnitionEventHandlerTest.java",
+      "src/test/java/org/traccar/helper/LogTest.java",
+      "src/test/java/org/traccar/protocol/IotmProtocolEncoderTest.java"
+    ],
+    "coverage_problems": [],
+    "blocked": [
+      {
+        "requirement": "env-example",
+        "reason": "uw-harness detect flags src/main/java/org/traccar/model/Command.java:78 (KEY_DEVICE_PASSWORD = \"devicePassword\") as a secret-looking value. It is an attribute name, not a secret. I left the product code unchanged, so env-example stays partial until the scanner is tuned or a human accepts it."
+      },
+      {
+        "requirement": "full-gate",
+        "reason": "Not in any gate: tools/test-integration.py and the other Python tools (they need a running server), and tests on MySQL, PostgreSQL or SQL Server (unit tests use H2 or memory only). Recorded in docs/harness/log.md."
+      },
+      {
+        "requirement": "local-env",
+        "reason": "debug.xml points web.path to ./traccar-web/simple, and the server stops at startup when that folder is missing (the submodule is empty in this checkout). make dev works around it with an API-only run (CONFIG_USE_ENVIRONMENT_VARIABLES=true, WEB_PATH=./target/web). The web UI cannot be served locally until the submodule question is answered."
+      },
+      {
+        "requirement": "fast-gate",
+        "reason": "This machine has only JDK 17 (default) and Homebrew JDK 25. The gates were verified on JDK 25 through tools/harness/java-home.sh. CI uses Temurin 21. Every Gradle run also needs Maven Central, because build.gradle resolves versions at configuration time."
+      }
+    ]
+  }
+}

@@ -1,0 +1,18 @@
+// Gradle init script used by the Makefile (`./gradlew -I tools/harness/test-summary.gradle ...`).
+// It does not change the build: it only prints failed tests with full stack traces and one
+// summary line per Test task, in the Maven Surefire format that CI tools and uw-harness read:
+//   Tests run: 3021, Failures: 0, Errors: 0, Skipped: 2
+allprojects {
+    tasks.withType(Test).configureEach {
+        testLogging {
+            events "failed"
+            exceptionFormat "full"
+        }
+        afterSuite { descriptor, result ->
+            if (descriptor.parent == null) {
+                println "Tests run: ${result.testCount}, Failures: ${result.failedTestCount}, " +
+                        "Errors: 0, Skipped: ${result.skippedTestCount}"
+            }
+        }
+    }
+}

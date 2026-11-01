@@ -17,3 +17,9 @@ jobs:
         java-version: 21
         cache: gradle
     - run: ./gradlew build --no-daemon --stacktrace
+    - uses: actions/setup-node@v7
+      with:
+        node-version: 20
+    # Runs `uw-harness check` (AGENTS.md and docs match the repository), then
+    # `make setup`, `make check-fast` and `make check`, and fails when a gate runs no test.
+    - run: npx -y uw-harness verify
