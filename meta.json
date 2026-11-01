@@ -1,0 +1,11 @@
+{
+  "slug": "traccar",
+  "upstream": "https://github.com/traccar/traccar",
+  "base_sha": "45ae7321fe56688ca26f2f5b62e6dbb7a4737562",
+  "base_branch": "master",
+  "started_at": "2026-11-01T16:22:03Z",
+  "uw_harness_sha": "491cab02495d9212aa88c2687df215e470d6092f",
+  "uw_harness_version": "0.3.0",
+  "agent": "claude",
+  "agent_version": "2.1.316 (Claude Code)"
+}

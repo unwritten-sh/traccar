@@ -1,0 +1,11 @@
+{
+  "command": "./gradlew test",
+  "ok": true,
+  "tests": {
+    "ran": 617,
+    "skipped": 27,
+    "failed": 0
+  },
+  "note": null,
+  "how": "own-tests-manual.sh with control/control.diff applied."
+}

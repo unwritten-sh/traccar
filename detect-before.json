@@ -1,0 +1,225 @@
+{
+  "spec_version": 4,
+  "score": 30,
+  "level": 0,
+  "counts": {
+    "pass": 3,
+    "partial": 4,
+    "fail": 12
+  },
+  "facts": {
+    "git": {
+      "isRepo": true,
+      "branch": "master",
+      "commits": 10155,
+      "lastCommit": "2026-11-01",
+      "dirty": false
+    },
+    "files": 1861,
+    "languages": [
+      {
+        "name": "Java",
+        "files": 1489
+      },
+      {
+        "name": "Python",
+        "files": 6
+      },
+      {
+        "name": "Shell",
+        "files": 3
+      }
+    ],
+    "runners": [
+      {
+        "kind": "gradle",
+        "file": "build.gradle",
+        "targets": [
+          "build",
+          "test",
+          "check",
+          "assemble",
+          "clean",
+          "copyDependencies"
+        ]
+      }
+    ],
+    "manifests": [
+      "build.gradle"
+    ],
+    "harnessFiles": []
+  },
+  "requirements": [
+    {
+      "id": "agents-file",
+      "area": "knowledge",
+      "level": 1,
+      "status": "fail",
+      "evidence": [
+        "no AGENTS.md"
+      ]
+    },
+    {
+      "id": "agents-file-accurate",
+      "area": "knowledge",
+      "level": 1,
+      "status": "fail",
+      "evidence": [
+        "no AGENTS.md to check"
+      ]
+    },
+    {
+      "id": "architecture",
+      "area": "knowledge",
+      "level": 1,
+      "status": "fail",
+      "evidence": [
+        "no docs/architecture.md"
+      ]
+    },
+    {
+      "id": "product",
+      "area": "knowledge",
+      "level": 1,
+      "status": "partial",
+      "evidence": [
+        "only README.md (62 lines), no docs/product.md"
+      ]
+    },
+    {
+      "id": "decisions",
+      "area": "knowledge",
+      "level": 2,
+      "status": "fail",
+      "evidence": [
+        "no docs/decisions/"
+      ]
+    },
+    {
+      "id": "implementation-log",
+      "area": "knowledge",
+      "level": 2,
+      "status": "fail",
+      "evidence": [
+        "no docs/harness/log.md"
+      ]
+    },
+    {
+      "id": "agreements",
+      "area": "knowledge",
+      "level": 1,
+      "status": "fail",
+      "evidence": [
+        "no CONTRIBUTING.md or docs/agreements/"
+      ]
+    },
+    {
+      "id": "task-runner",
+      "area": "loops",
+      "level": 1,
+      "status": "pass",
+      "evidence": [
+        "build.gradle: 6 tasks"
+      ]
+    },
+    {
+      "id": "fast-gate",
+      "area": "loops",
+      "level": 2,
+      "status": "partial",
+      "evidence": [
+        "fast gate \"test\" exists but was never verified (run uw-harness verify)"
+      ]
+    },
+    {
+      "id": "full-gate",
+      "area": "loops",
+      "level": 2,
+      "status": "partial",
+      "evidence": [
+        "full gate \"check\" exists but was never verified (run uw-harness verify)"
+      ]
+    },
+    {
+      "id": "tests",
+      "area": "loops",
+      "level": 1,
+      "status": "pass",
+      "evidence": [
+        "426 test files (ignored: 4 with only trivial assertions)"
+      ]
+    },
+    {
+      "id": "ci",
+      "area": "loops",
+      "level": 2,
+      "status": "pass",
+      "evidence": [
+        "CI calls 2 task runner targets (build, assemble)"
+      ]
+    },
+    {
+      "id": "hooks",
+      "area": "loops",
+      "level": 3,
+      "status": "fail",
+      "evidence": [
+        "no git hooks configuration"
+      ]
+    },
+    {
+      "id": "local-env",
+      "area": "environment",
+      "level": 1,
+      "status": "fail",
+      "evidence": [
+        "no compose file, devcontainer or dev target"
+      ]
+    },
+    {
+      "id": "env-example",
+      "area": "environment",
+      "level": 1,
+      "status": "fail",
+      "evidence": [
+        "no .env.example"
+      ]
+    },
+    {
+      "id": "toolchain-pinned",
+      "area": "environment",
+      "level": 1,
+      "status": "fail",
+      "evidence": [
+        "no runtime version file"
+      ]
+    },
+    {
+      "id": "deploy-explicit",
+      "area": "operations",
+      "level": 3,
+      "status": "partial",
+      "evidence": [
+        "deployment artifacts (docker/Dockerfile.alpine, docker/Dockerfile.debian, docker/Dockerfile.ubuntu) but no docs/deploy.md"
+      ]
+    },
+    {
+      "id": "observability",
+      "area": "operations",
+      "level": 3,
+      "status": "fail",
+      "evidence": [
+        "no docs/observability.md"
+      ]
+    },
+    {
+      "id": "skills",
+      "area": "capabilities",
+      "level": 2,
+      "status": "fail",
+      "evidence": [
+        "no skills in .agents/skills/ or .claude/skills/"
+      ]
+    }
+  ]
+}

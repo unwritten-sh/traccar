@@ -1,0 +1,65 @@
+uw-harness prove  /Users/victor/Repos/unwritten/uw-harness-cases/traccar/repo
+
+▸ Task
+  Add unit tests for HealthResource
+  GET /api/health (src/main/java/org/traccar/api/resource/HealthResource.java) is what systemd and the Docker healthchecks use to restart Traccar, but it has no test. Add HealthResourceTest covering the database check and the web.healthCheck.dropThreshold message-ratio logic, using Mockito for Config, StatisticsManager and Storage.
+  - Done when: src/test/java/org/traccar/api/resource/HealthResourceTest.java exists and runs with make test TESTS=org.traccar.api.resource.HealthResourceTest
+  - Done when: Tests cover: 200 OK when storage answers, 500 when storage throws StorageException, 500 when stored messages drop below the configured threshold, 200 when no threshold is set
+  - Done when: No change to HealthResource.java, or a minimal change justified in the PR description
+  - Done when: make check-fast passes
+  Agent: claude. It works alone on a new branch; you review the result.
+
+▸ Before
+  $ make setup
+  ✓ setup gate passed in 1s
+  $ make check-fast
+  ✓ fast gate passed in 4s: 612 tests, 27 skipped
+  $ make check
+  ✓ full gate passed in 4s: 612 tests, 27 skipped
+
+▸ Work
+  Created branch uw-harness/prove-20261101-1736 from uw-harness/20261101-1725
+  · read /Users/victor/Repos/unwritten/uw-harness-cases/traccar/repo/src/main/java/org/traccar/api/resource/HealthResource.java
+  · $ cd /Users/victor/Repos/unwritten/uw-harness-cases/traccar/repo; cat .agents/skills/implem…
+  · $ cd /Users/victor/Repos/unwritten/uw-harness-cases/traccar/repo; grep -n -i "mockito\|juni…
+  · $ cd /Users/victor/Repos/unwritten/uw-harness-cases/traccar/repo; grep -n "class\|public St…
+  · $ cd /Users/victor/Repos/unwritten/uw-harness-cases/traccar/repo; sed -n 16,80p src/main/ja…
+  · write /Users/victor/Repos/unwritten/uw-harness-cases/traccar/repo/src/test/java/org/traccar/api/resource/HealthResourceTest.java
+  · $ cd /Users/victor/Repos/unwritten/uw-harness-cases/traccar/repo; make test TESTS=org.tracc…
+  · $ cd /Users/victor/Repos/unwritten/uw-harness-cases/traccar/repo; make check-fast 2>&1 | gr…
+  · $ cd /Users/victor/Repos/unwritten/uw-harness-cases/traccar/repo; grep -o 'name="[^"]*"\|<e…
+  · $ cd /Users/victor/Repos/unwritten/uw-harness-cases/traccar/repo; grep -n -A4 CustomImportO…
+  · edit /Users/victor/Repos/unwritten/uw-harness-cases/traccar/repo/src/test/java/org/traccar/api/resource/HealthResourceTest.java
+  · $ cd /Users/victor/Repos/unwritten/uw-harness-cases/traccar/repo; make check-fast 2>&1 | gr…
+  · $ cd /Users/victor/Repos/unwritten/uw-harness-cases/traccar/repo; head -30 docs/harness/log…
+  · $ cd /Users/victor/Repos/unwritten/uw-harness-cases/traccar/repo; cat >> docs/harness/log.m…
+  · StructuredOutput
+  ✓ agent reports: done, 2 files changed
+
+▸ Verify
+  $ make check-fast
+  ✓ fast gate passed in 5s: 617 tests, 27 skipped
+  $ make check
+  ✓ full gate passed in 4s: 617 tests, 27 skipped
+
+▸ Report
+  Running the fast gate again on the files uw-harness wrote
+  $ make check-fast
+  ✓ fast gate passed in 4s: 617 tests, 27 skipped
+  Agent status: done. Acceptance criteria met (reported by the agent): 4 of 4
+    ✓ src/test/java/org/traccar/api/resource/HealthResourceTest.java exists and runs with make test TESTS=org.traccar.api.resource.HealthResourceTest make test TESTS=org.traccar.api.resource.HealthResourceTest -> 'Tests run: 5, Failures: 0, Errors: 0, Skipped: 0', BUILD SUCCESSFUL
+    ✓ Tests cover: 200 OK when storage answers, 500 when storage throws StorageException, 500 when stored messages drop below the configured threshold, 200 when no threshold is set testOkWhenStorageAnswers, testErrorWhenStorageThrows, testErrorWhenMessagesDropBelowThreshold (threshold 0.5, intervals 100 then 10), testOkWhenNoThreshold (threshold 0.0, same drop); also testOkWhenMessagesStayAboveThreshold (ratio 0.8)
+    ✓ No change to HealthResource.java, or a minimal change justified in the PR description git diff shows no change to src/main; only the new test and the log entry
+    ✓ make check-fast passes make check-fast -> 'Tests run: 617, Failures: 0, Errors: 0, Skipped: 27', BUILD SUCCESSFUL (first run failed on Checkstyle import order, fixed)
+  ✓ Gates after the task. Tests before: 612 tests, 27 skipped. After: 617 tests, 27 skipped.
+  Fix rounds after a gate failed: 0. Questions for a human: 0.
+
+  Gaps in the harness reported by the agent
+  - AGENTS.md: Conventions mention only 'single-class imports'. The import order that Checkstyle enforces (third-party org.*, then java/javax/jakarta, then static, alphabetical, with one blank line between groups) is not documented, so my first check-fast failed with 10 CustomImportOrder errors. Note that main code puts jakarta after org.* with a blank line, which is easy to copy wrongly into a test.
+  - AGENTS.md: Layout says tests mirror main packages and points to BaseTest, but there is no src/test/java/org/traccar/api package and no example of testing a Jersey resource. A short note on how to unit-test a resource (private @Inject fields, no mockito-junit-jupiter, BaseResource.storage hidden by subclass fields) would save searching.
+  - .agents/skills/implement-change/SKILL.md: make check-fast output on Checkstyle failure prints only 'violations by severity: [error:10]'; the skill could say the details are in build/reports/checkstyle/test.xml (or main.xml).
+
+  ✓ Done without human help.
+  Committed as 1f259cc7e on uw-harness/prove-20261101-1736. Review it like any pull request.
+  Done in 2m 0s. Agent transcripts: /Users/victor/Repos/unwritten/uw-harness-cases/traccar/repo/.git/uw-harness
+prove exit 0

@@ -1,0 +1,300 @@
+{
+  "slug": "traccar",
+  "upstream": "https://github.com/traccar/traccar",
+  "base_sha": "45ae7321fe56688ca26f2f5b62e6dbb7a4737562",
+  "agent": "claude 2.1.316 (Claude Code)",
+  "uw_harness": {
+    "version": "0.3.0",
+    "at_start": "491cab02495d9212aa88c2687df215e470d6092f",
+    "notes": "finished_at 2026-11-01T16:41:03Z\nuw_harness_sha_at_end 4ce89e89f45adcc244c3ff8c3729e7310d7913f7"
+  },
+  "branches": {
+    "harness": "uw-harness/20261101-1725",
+    "prove": "uw-harness/prove-20261101-1736"
+  },
+  "facts": {
+    "commits": 10155,
+    "first_commit": "2010-04-11",
+    "files": 1861,
+    "languages": [
+      {
+        "name": "Java",
+        "files": 1489
+      },
+      {
+        "name": "Python",
+        "files": 6
+      },
+      {
+        "name": "Shell",
+        "files": 3
+      }
+    ]
+  },
+  "score": {
+    "before": 30,
+    "after": 92,
+    "final": 94
+  },
+  "level": {
+    "before": 0,
+    "after": 2,
+    "final": 2
+  },
+  "requirements": {
+    "before": {
+      "pass": 3,
+      "partial": 4,
+      "fail": 12
+    },
+    "after": {
+      "pass": 16,
+      "partial": 3,
+      "fail": 0
+    },
+    "final": {
+      "pass": 17,
+      "partial": 2,
+      "fail": 0
+    }
+  },
+  "not_passing_final": [
+    {
+      "id": "deploy-explicit",
+      "status": "partial",
+      "evidence": [
+        "docs/deploy.md has open questions for a human"
+      ]
+    },
+    {
+      "id": "observability",
+      "status": "partial",
+      "evidence": [
+        "docs/observability.md has open questions for a human"
+      ]
+    }
+  ],
+  "run_minutes": 14.6,
+  "baseline_in_run": {
+    "command": "./gradlew test",
+    "ok": false,
+    "tests": null,
+    "note": "ran no test (exit 1)"
+  },
+  "baseline_measured_later": {
+    "command": "./gradlew test",
+    "ok": true,
+    "tests": {
+      "ran": 612,
+      "skipped": 27,
+      "failed": 0
+    },
+    "note": null,
+    "how": "own-tests-manual.sh: base commit, JDK 25 found by tools/harness/java-home.sh (the default Java 17 cannot compile it: the run measured nothing), counts from the JUnit XML reports."
+  },
+  "gates": {
+    "setup": "make setup",
+    "fast": "make check-fast",
+    "full": "make check"
+  },
+  "verified": {
+    "setup": {
+      "command": "make setup",
+      "ok": true,
+      "at": "2026-11-01T16:36:37.011Z",
+      "commit": "45ae7321f",
+      "tests": null,
+      "fingerprint": "ae43157d15ec20c3"
+    },
+    "fast": {
+      "command": "make check-fast",
+      "ok": true,
+      "at": "2026-11-01T16:36:37.011Z",
+      "commit": "45ae7321f",
+      "tests": {
+        "ran": 612,
+        "skipped": 27,
+        "failed": 0
+      },
+      "fingerprint": "ae43157d15ec20c3"
+    },
+    "full": {
+      "command": "make check",
+      "ok": true,
+      "at": "2026-11-01T16:36:37.011Z",
+      "commit": "45ae7321f",
+      "tests": {
+        "ran": 612,
+        "skipped": 27,
+        "failed": 0
+      },
+      "fingerprint": "ae43157d15ec20c3"
+    }
+  },
+  "findings": {
+    "skipped_test_files": [],
+    "relaxed_checks": [],
+    "review_commit": [],
+    "secrets_added": [],
+    "secrets_in_repo": [
+      {
+        "file": "src/main/java/org/traccar/model/Command.java",
+        "kind": "password or secret"
+      }
+    ],
+    "trivial_test_files": [
+      "src/test/java/org/traccar/forward/PositionForwarderUrlTest.java",
+      "src/test/java/org/traccar/handler/events/IgnitionEventHandlerTest.java",
+      "src/test/java/org/traccar/helper/LogTest.java",
+      "src/test/java/org/traccar/protocol/IotmProtocolEncoderTest.java"
+    ],
+    "coverage_problems": [],
+    "blocked": [
+      {
+        "requirement": "env-example",
+        "reason": "uw-harness detect flags src/main/java/org/traccar/model/Command.java:78 (KEY_DEVICE_PASSWORD = \"devicePassword\") as a secret-looking value. It is an attribute name, not a secret. I left the product code unchanged, so env-example stays partial until the scanner is tuned or a human accepts it."
+      },
+      {
+        "requirement": "full-gate",
+        "reason": "Not in any gate: tools/test-integration.py and the other Python tools (they need a running server), and tests on MySQL, PostgreSQL or SQL Server (unit tests use H2 or memory only). Recorded in docs/harness/log.md."
+      },
+      {
+        "requirement": "local-env",
+        "reason": "debug.xml points web.path to ./traccar-web/simple, and the server stops at startup when that folder is missing (the submodule is empty in this checkout). make dev works around it with an API-only run (CONFIG_USE_ENVIRONMENT_VARIABLES=true, WEB_PATH=./target/web). The web UI cannot be served locally until the submodule question is answered."
+      },
+      {
+        "requirement": "fast-gate",
+        "reason": "This machine has only JDK 17 (default) and Homebrew JDK 25. The gates were verified on JDK 25 through tools/harness/java-home.sh. CI uses Temurin 21. Every Gradle run also needs Maven Central, because build.gradle resolves versions at configuration time."
+      }
+    ]
+  },
+  "open_questions": [
+    {
+      "file": "docs/deploy.md",
+      "requirement": "deploy-explicit",
+      "question": "How is the managed hosting (traccar.org pricing) and the demo server deployed and updated: from the Docker images, installers, or another pipeline outside this repository?"
+    },
+    {
+      "file": "docs/deploy.md",
+      "requirement": "deploy-explicit",
+      "question": "Who is allowed to run the 'Build Release' workflow, and how is a bad release rolled back (re-tag, previous Docker tag, schema rollback)?"
+    },
+    {
+      "file": "docs/observability.md",
+      "requirement": "observability",
+      "question": "For the managed service, where are logs, metrics and alerts kept, and which signal tells you production is broken (only /api/health, or something else)?"
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "requirement": "agreements",
+      "question": "Should outside contributors and agents always open a pull request, while maintainers keep committing directly to master as the history shows?"
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "requirement": "agreements",
+      "question": "What is the definition of done for a protocol change: is a decoder test with a real device sample always required, and must tools/test-integration.py also pass?"
+    },
+    {
+      "file": "docs/local-dev.md",
+      "requirement": "toolchain-pinned",
+      "question": "Which Java version should developers use: 21 (CI and build.gradle) or 25 (release builds and Docker images)? .java-version says 21 for now."
+    },
+    {
+      "file": "docs/local-dev.md",
+      "requirement": "local-env",
+      "question": "Should local development check out the traccar-web submodule (relative URL ../traccar-web.git), or is the backend usually run without the web UI?"
+    }
+  ],
+  "files_added_or_changed": 27,
+  "proof": {
+    "task": {
+      "title": "Add unit tests for HealthResource",
+      "description": "GET /api/health (src/main/java/org/traccar/api/resource/HealthResource.java) is what systemd and the Docker healthchecks use to restart Traccar, but it has no test. Add HealthResourceTest covering the database check and the web.healthCheck.dropThreshold message-ratio logic, using Mockito for Config, StatisticsManager and Storage.",
+      "acceptance": [
+        "src/test/java/org/traccar/api/resource/HealthResourceTest.java exists and runs with make test TESTS=org.traccar.api.resource.HealthResourceTest",
+        "Tests cover: 200 OK when storage answers, 500 when storage throws StorageException, 500 when stored messages drop below the configured threshold, 200 when no threshold is set",
+        "No change to HealthResource.java, or a minimal change justified in the PR description",
+        "make check-fast passes"
+      ]
+    },
+    "status": "done",
+    "gates_ok": true,
+    "fix_rounds": 0,
+    "tests_before": {
+      "ran": 612,
+      "skipped": 27,
+      "failed": 0
+    },
+    "tests_after": {
+      "ran": 617,
+      "skipped": 27,
+      "failed": 0
+    },
+    "failed_before": [],
+    "acceptance_met": 4,
+    "acceptance_requested": 4,
+    "human_needed": [],
+    "harness_gaps": [
+      {
+        "file": "AGENTS.md",
+        "problem": "Conventions mention only 'single-class imports'. The import order that Checkstyle enforces (third-party org.*, then java/javax/jakarta, then static, alphabetical, with one blank line between groups) is not documented, so my first check-fast failed with 10 CustomImportOrder errors. Note that main code puts jakarta after org.* with a blank line, which is easy to copy wrongly into a test."
+      },
+      {
+        "file": "AGENTS.md",
+        "problem": "Layout says tests mirror main packages and points to BaseTest, but there is no src/test/java/org/traccar/api package and no example of testing a Jersey resource. A short note on how to unit-test a resource (private @Inject fields, no mockito-junit-jupiter, BaseResource.storage hidden by subclass fields) would save searching."
+      },
+      {
+        "file": ".agents/skills/implement-change/SKILL.md",
+        "problem": "make check-fast output on Checkstyle failure prints only 'violations by severity: [error:10]'; the skill could say the details are in build/reports/checkstyle/test.xml (or main.xml)."
+      }
+    ],
+    "relaxed_checks": [],
+    "skipped_test_files": [],
+    "duration_s": 116,
+    "prove_minutes": 2
+  },
+  "control": {
+    "status": "partial",
+    "criteria_met": 2,
+    "criteria_requested": 4,
+    "unmet": [
+      "src/test/java/org/traccar/api/resource/HealthResourceTest.java exists and runs with make test TESTS=org.traccar.api.resource.HealthResourceTest",
+      "make check-fast passes"
+    ],
+    "human_needed": [
+      {
+        "question": "Should this worktree have the Makefile, AGENTS.md, docs/ and .claude/ that the sibling checkout (../../repo) has? If yes, can someone confirm that `make test` and `make check-fast` wrap the same Gradle tasks I ran?",
+        "why": "The acceptance criteria and the implement-change skill both name make targets, but these targets do not exist in this tree. I could only verify with the Gradle commands they probably wrap."
+      }
+    ],
+    "duration_s": 110,
+    "files_changed": [
+      "src/test/java/org/traccar/api/resource/HealthResourceTest.java"
+    ],
+    "own_tests": {
+      "command": "./gradlew test",
+      "ok": false,
+      "tests": null,
+      "note": "ran no test (exit 1)"
+    },
+    "own_tests_measured_later": {
+      "command": "./gradlew test",
+      "ok": true,
+      "tests": {
+        "ran": 617,
+        "skipped": 27,
+        "failed": 0
+      },
+      "note": null,
+      "how": "own-tests-manual.sh with control/control.diff applied."
+    },
+    "harness_gates": {
+      "ok": true,
+      "tests": {
+        "ran": 617,
+        "skipped": 27,
+        "failed": 0
+      }
+    }
+  }
+}

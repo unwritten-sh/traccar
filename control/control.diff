@@ -1,0 +1,110 @@
+diff --git a/src/test/java/org/traccar/api/resource/HealthResourceTest.java b/src/test/java/org/traccar/api/resource/HealthResourceTest.java
+new file mode 100644
+index 000000000..025e2bc56
+--- /dev/null
++++ b/src/test/java/org/traccar/api/resource/HealthResourceTest.java
+@@ -0,0 +1,104 @@
++package org.traccar.api.resource;
++
++import org.junit.jupiter.api.BeforeEach;
++import org.junit.jupiter.api.Test;
++import org.traccar.config.Config;
++import org.traccar.config.Keys;
++import org.traccar.database.StatisticsManager;
++import org.traccar.model.Server;
++import org.traccar.storage.Storage;
++import org.traccar.storage.StorageException;
++
++import jakarta.ws.rs.core.Response;
++import java.lang.reflect.Field;
++
++import static org.junit.jupiter.api.Assertions.assertEquals;
++import static org.mockito.ArgumentMatchers.any;
++import static org.mockito.ArgumentMatchers.eq;
++import static org.mockito.Mockito.mock;
++import static org.mockito.Mockito.when;
++
++public class HealthResourceTest {
++
++    private Config config;
++    private StatisticsManager statisticsManager;
++    private Storage storage;
++    private HealthResource resource;
++
++    private static void setField(Object target, String name, Object value) throws Exception {
++        Field field = HealthResource.class.getDeclaredField(name);
++        field.setAccessible(true);
++        field.set(target, value);
++    }
++
++    @BeforeEach
++    public void setUp() throws Exception {
++        // Counters are static in HealthResource, so reset them between tests
++        setField(null, "messageLastTotal", 0L);
++        setField(null, "messageLastCheck", 0L);
++
++        config = mock(Config.class);
++        statisticsManager = mock(StatisticsManager.class);
++        storage = mock(Storage.class);
++
++        resource = new HealthResource();
++        setField(resource, "config", config);
++        setField(resource, "statisticsManager", statisticsManager);
++        setField(resource, "storage", storage);
++    }
++
++    @Test
++    public void testOkWhenStorageAnswers() throws Exception {
++        when(storage.getObject(eq(Server.class), any())).thenReturn(new Server());
++
++        Response response = resource.health();
++
++        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
++        assertEquals("OK", response.getEntity());
++    }
++
++    @Test
++    public void testErrorWhenStorageThrows() throws Exception {
++        when(storage.getObject(eq(Server.class), any())).thenThrow(new StorageException("database down"));
++
++        Response response = resource.health();
++
++        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
++    }
++
++    @Test
++    public void testErrorWhenMessagesDropBelowThreshold() throws Exception {
++        when(config.getDouble(Keys.WEB_HEALTH_CHECK_DROP_THRESHOLD)).thenReturn(0.5);
++        when(storage.getObject(eq(Server.class), any())).thenReturn(new Server());
++        // Increments: 100, 100, then 10 (ratio 0.1 < 0.5)
++        when(statisticsManager.messageStoredCount()).thenReturn(100, 200, 210);
++
++        assertEquals(Response.Status.OK.getStatusCode(), resource.health().getStatus());
++        assertEquals(Response.Status.OK.getStatusCode(), resource.health().getStatus());
++        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), resource.health().getStatus());
++    }
++
++    @Test
++    public void testOkWhenMessagesAboveThreshold() throws Exception {
++        when(config.getDouble(Keys.WEB_HEALTH_CHECK_DROP_THRESHOLD)).thenReturn(0.5);
++        when(storage.getObject(eq(Server.class), any())).thenReturn(new Server());
++        // Increments: 100, 100, then 60 (ratio 0.6 >= 0.5)
++        when(statisticsManager.messageStoredCount()).thenReturn(100, 200, 260);
++
++        assertEquals(Response.Status.OK.getStatusCode(), resource.health().getStatus());
++        assertEquals(Response.Status.OK.getStatusCode(), resource.health().getStatus());
++        assertEquals(Response.Status.OK.getStatusCode(), resource.health().getStatus());
++    }
++
++    @Test
++    public void testOkWhenNoThresholdSet() throws Exception {
++        // Mocked config returns 0.0, the same as an unset key
++        when(storage.getObject(eq(Server.class), any())).thenReturn(new Server());
++        when(statisticsManager.messageStoredCount()).thenReturn(100, 200, 210);
++
++        assertEquals(Response.Status.OK.getStatusCode(), resource.health().getStatus());
++        assertEquals(Response.Status.OK.getStatusCode(), resource.health().getStatus());
++        assertEquals(Response.Status.OK.getStatusCode(), resource.health().getStatus());
++    }
++
++}

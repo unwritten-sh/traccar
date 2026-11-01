@@ -1,0 +1,11 @@
+{
+  "command": "./gradlew test",
+  "ok": true,
+  "tests": {
+    "ran": 612,
+    "skipped": 27,
+    "failed": 0
+  },
+  "note": null,
+  "how": "own-tests-manual.sh: base commit, JDK 25 found by tools/harness/java-home.sh (the default Java 17 cannot compile it: the run measured nothing), counts from the JUnit XML reports."
+}

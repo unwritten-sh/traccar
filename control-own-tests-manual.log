@@ -1,0 +1,9 @@
+applied /Users/victor/Repos/unwritten/uw-harness-cases/traccar/control/control.diff
+JAVA_HOME=/opt/homebrew/opt/openjdk@25/libexec/openjdk.jdk/Contents/Home
+
+For more on this, please refer to https://docs.gradle.org/9.8.2/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 13s
+11 actionable tasks: 11 executed
+xml: ran 617 skipped 27 failed 0
+exit 0 seconds 14
