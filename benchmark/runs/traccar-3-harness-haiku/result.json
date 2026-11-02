@@ -1,0 +1,75 @@
+{
+  "task": "traccar-3",
+  "arm": "harness-haiku",
+  "start": "aa6d237840c11d8124f89a013bc0435f2e7f2bff",
+  "seconds": 179,
+  "result": {
+    "status": "done",
+    "summary": "The 15 position filter settings are now device keys. FilterHandler resolves each one per position through AttributeUtil.lookup (device attribute, then groups, then server config, then key default). The constructor is now FilterHandler(cacheManager, statisticsManager), and MainModule is updated. Tests cover device overrides, group inheritance, and the future default. make check-fast passes: 615 tests, 0 failures, 27 skipped (pre-existing @Disabled), Checkstyle clean. Nothing was committed or pushed.",
+    "changes": [
+      {
+        "path": "src/main/java/org/traccar/config/Keys.java",
+        "summary": "Added KeyType.DEVICE to the 15 filter keys (filter.invalid, zero, duplicate, outdated, future, past, accuracy, approximate, static, distance, maxSpeed, minPeriod, dailyLimit, dailyLimitInterval, skipLimit). Gave the keys that had null defaults explicit defaults (false, 0 or 0L) so the lookup never returns null for them. filter.future keeps 86400L. filter.globalDailyLimit stays CONFIG-only."
+      },
+      {
+        "path": "src/main/java/org/traccar/handler/FilterHandler.java",
+        "summary": "Constructor is now (CacheManager, StatisticsManager). Each filter reads its setting per position via AttributeUtil.lookup for the position's device. The global daily limit is read from the cache config. Filter logic is otherwise unchanged."
+      },
+      {
+        "path": "src/main/java/org/traccar/MainModule.java",
+        "summary": "provideFilterHandler calls new FilterHandler(cacheManager, statisticsManager)."
+      },
+      {
+        "path": "src/test/java/org/traccar/handler/FilterHandlerTest.java",
+        "summary": "Rewritten on a real Config with Device and Group objects. Tests: the original filter and skip-attribute cases, default future filter with per-device 0 override, device attribute overriding server config, group attribute with device override. Passing config now sets filter.future to 0 explicitly."
+      },
+      {
+        "path": "docs/harness/log.md",
+        "summary": "Appended a 2026-11-02 entry describing the change, what was learned and what is left."
+      }
+    ],
+    "acceptance": [
+      {
+        "criterion": "A filter setting on a device or group changes the filtering of that device only",
+        "met": true,
+        "evidence": "FilterHandlerTest.testDeviceAttributeOverridesServerConfig: server filter.zero=true, device 1 sets filter.zero=false and its zero position passes, device 2 with no attribute is filtered. FilterHandlerTest.testGroupAttributeAndDeviceOverride: group 7 sets filter.invalid=true, grouped device 1 is filtered, device 2 overrides with false and passes, ungrouped device 3 passes. Both pass under make test TESTS=org.traccar.handler.FilterHandlerTest (5 tests, 0 failures)."
+      },
+      {
+        "criterion": "The change is covered by tests",
+        "met": true,
+        "evidence": "FilterHandlerTest has 5 tests. Three are new: testDefaultFutureFilter, testDeviceAttributeOverridesServerConfig, testGroupAttributeAndDeviceOverride. The two original tests are kept and adapted to the new constructor and real Config. Covered settings: invalid, zero, future (default and device 0 override), skip attributes. Not covered per device: daily limit, daily limit interval, min period, distance, max speed, accuracy, past, outdated, approximate, static, duplicate, skip limit."
+      },
+      {
+        "criterion": "The existing test suite still passes",
+        "met": true,
+        "evidence": "make check-fast: checkstyleMain and checkstyleTest pass, Tests run: 615, Failures: 0, Errors: 0, Skipped: 27 (27 skips are pre-existing @Disabled). Before the change the count was 612. I did not run make check (the full ./gradlew build), only the fast gate."
+      }
+    ],
+    "human_needed": [
+      {
+        "question": "Should filter settings also be documented as device attributes in user docs? Keys.java Javadoc is the only documentation and it does not mention per-device or per-group use.",
+        "why": "The task says Keys.java Javadoc is user documentation. I did not change the Javadoc text, so users may not know the keys can now be set per device."
+      }
+    ],
+    "harness_used": [
+      "AGENTS.md (commands table, conventions, what never to do, implementation log requirement)",
+      "make check-fast and make test TESTS=... targets",
+      "docs/harness/log.md (log entry format)",
+      "docs/harness/brief.md (read, but it describes an unrelated pilot task)"
+    ],
+    "harness_gaps": [
+      {
+        "file": "docs/harness/brief.md",
+        "problem": "Describes a different pilot task (HealthResource tests) and does not mention this task or how to verify a per-device config change."
+      },
+      {
+        "file": "src/main/java/org/traccar/config/Keys.java",
+        "problem": "Nothing in the repository lists which keys are device or group keys, so the change could not be checked against a list. Javadoc does not say whether a key can be set per device."
+      },
+      {
+        "file": "src/test/java/org/traccar/handler/FilterHandlerTest.java",
+        "problem": "No shared test helper exists for building a Device or Group cache with attributes. Each test class builds its own mocks, which made the per-device tests verbose."
+      }
+    ]
+  }
+}

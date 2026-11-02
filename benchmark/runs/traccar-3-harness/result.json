@@ -1,0 +1,70 @@
+{
+  "task": "traccar-3",
+  "arm": "harness",
+  "start": "fec4d45360e679ab262a732b453e726acb0a320e",
+  "seconds": 137,
+  "result": {
+    "status": "done",
+    "summary": "You can now set the 15 position filter settings per device or per group. Each one is marked as a device key, and FilterHandler looks up its value for each position: device attribute first, then its groups, then the server config, then the key's default. For example, filter.future still defaults to 86400 s, and a value of 0 or false turns that filter off. FilterHandler is now built with only the cache manager and the statistics manager. filter.globalDailyLimit and filter.enable are still config-only, because they apply to the whole server. FilterHandlerTest was rewritten and extended to 10 tests, which check that device and group settings change filtering only for that device. make check-fast passes: Checkstyle is clean and 620 tests run with 0 failures; the 27 skipped tests were already disabled before this change. I did not run make check (the full CI build).",
+    "changes": [
+      {
+        "path": "src/main/java/org/traccar/config/Keys.java",
+        "summary": "Added KeyType.DEVICE to the 15 filter keys: invalid, zero, duplicate, outdated, future, past, accuracy, approximate, static, distance, maxSpeed, minPeriod, dailyLimit, dailyLimitInterval and skipLimit."
+      },
+      {
+        "path": "src/main/java/org/traccar/handler/FilterHandler.java",
+        "summary": "Removed the fields that read the config once. The constructor is now FilterHandler(CacheManager, StatisticsManager). Each filter looks up its setting for the position's device with AttributeUtil.lookup; a missing value counts as 0 or false. The global daily limit is read from cacheManager.getConfig()."
+      },
+      {
+        "path": "src/main/java/org/traccar/MainModule.java",
+        "summary": "provideFilterHandler now calls the new two-argument constructor."
+      },
+      {
+        "path": "src/test/java/org/traccar/handler/FilterHandlerTest.java",
+        "summary": "Rewritten to use real Device and Group objects and to mock the config through getString, which is what the lookup reads. Added tests for: the future default, a device setting that affects only that device, a device setting that overrides the config, a device setting of 0 that turns off the future default, a group setting with a device override, and per-device minPeriod and dailyLimit."
+      },
+      {
+        "path": "docs/harness/log.md",
+        "summary": "Added a log entry for this change."
+      }
+    ],
+    "acceptance": [
+      {
+        "criterion": "A filter setting on a device or group changes the filtering of that device only",
+        "met": true,
+        "evidence": "In FilterHandlerTest, testDeviceAttribute, testDeviceAttributeOverridesConfig, testDeviceAttributeDisablesFutureDefault, testGroupAttribute, testDeviceMinPeriod and testDeviceDailyLimit each check that the configured device is filtered (or not) while a second device with no setting behaves differently."
+      },
+      {
+        "criterion": "The change is covered by tests",
+        "met": true,
+        "evidence": "make test TESTS=org.traccar.handler.FilterHandlerTest: 10 tests run, 0 failures."
+      },
+      {
+        "criterion": "The existing test suite still passes",
+        "met": true,
+        "evidence": "make check-fast: Checkstyle main and test pass, 620 tests run, 0 failures, 0 errors, 27 skipped (tests that were already disabled), BUILD SUCCESSFUL. make check (the full CI build) was not run."
+      }
+    ],
+    "human_needed": [],
+    "harness_used": [
+      "AGENTS.md/CLAUDE.md: commands table (make test TESTS=..., make check-fast) and the rule that every config key lives in Keys.java with Javadoc",
+      "implement-change skill: names FilterHandler and FilterHandlerTest as the example pair and gives the test-first steps",
+      "docs/harness/log.md: the log-entry convention",
+      "make check-fast: fast, reliable gate (about 12 s with a warm cache)"
+    ],
+    "harness_gaps": [
+      {
+        "file": "docs/architecture.md",
+        "problem": "Does not explain how per-device settings are resolved (KeyType.DEVICE plus AttributeUtil.lookup: device, then groups, then server, then config, then default). I learned it by reading AttributeUtil."
+      },
+      {
+        "file": "src/test/java/org/traccar/BaseTest.java",
+        "problem": "There is no test helper that builds a CacheManager mock with a device, groups and config values for AttributeUtil.lookup. Tests must know that the lookup calls Config.getString(key) and not getBoolean or getLong. That is easy to get wrong, and the old FilterHandlerTest mocks would have stopped working without any error."
+      },
+      {
+        "file": "traccar-web (submodule)",
+        "problem": "The submodule is empty in this checkout, so I could not check whether the web UI lists the new device attributes."
+      }
+    ]
+  }
+}

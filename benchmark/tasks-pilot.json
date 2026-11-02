@@ -1,0 +1,41 @@
+[
+  {
+    "id": "traccar-1",
+    "sha": "97b5e4063cbf4904d32e82cf4deb23a58fe4b7e0",
+    "kind": "protocol decoder",
+    "text": "The JMAK protocol decoder (text format) ignores most of the CAN bus fields that newer JMAK devices send. The CAN block of a message starts with a hexadecimal bit mask; each set bit means that one field follows, in bit order. Today the decoder reads the fields up to bit 14 and stops.\n\nDecode the remaining fields, bits 15 to 38, in this order, and store them as position attributes with these names and types:\n\n15 tripFuelUsed (decimal), 16 engineTorque (decimal), 17 engine load (decimal, the standard engine load key), 18 fuelEconomy (decimal), 19 oilPressure (decimal), 20 brakePressure1 (decimal), 21 brakePressure2 (decimal), 22 pto (integer), 23 gear (integer), 24 engineBrake (decimal), 25 transmissionOilTemp (decimal), 26 transmissionOilPressure (decimal), 27 boostPressure (decimal), 28 intakeTemp (decimal), 29 fuelTemp (decimal), 30 adBlueLevel (decimal), 31 adBlueTemp (decimal), 32 scrPressure (decimal), 33 dpfPressure (decimal), 34 dpfRegeneration (integer), 35 ambientTemperature (decimal), 36 batteryVoltage (decimal), 37 wiper (integer), 38 instantFuelConsumption (decimal).\n\nAlso, the fuel field comes with a unit field just before it. Today the unit is skipped and the value is always stored as fuel in liters. When the unit is \"L\" (or absent), keep storing the fuel in liters; for any other unit, store the value as the fuel level (a percentage) instead.\n\nDone when:\n- a message with these CAN fields is decoded into the attributes above;\n- the change is covered by tests;\n- the existing test suite still passes.",
+    "tests": [
+      "src/test/java/org/traccar/protocol/JmakProtocolDecoderTest.java"
+    ],
+    "product": [
+      "src/main/java/org/traccar/protocol/JmakProtocolDecoder.java"
+    ]
+  },
+  {
+    "id": "traccar-2",
+    "sha": "d5124e7f550e2e2260c10a55a130f1e0fafef8bd",
+    "kind": "protocol encoder",
+    "text": "Traccar can receive positions from JMAK devices but cannot send them commands. Add command support for JMAK, over the TCP connection and over SMS.\n\nDevice documentation: a command sets device parameters, each identified by a number.\n- Over TCP, a command is `$`, then the parameters separated by `|`, then `#`. Each parameter is written `<id>;<value>;`. Example: `$34;1;#`.\n- Over SMS, a command is `JMAK#`, then the parameters separated by `#`, then `#`. Each parameter is written `<action>;<id>;<value>`, where the action is `s` to set a value and `e` to enable or disable an event. Example: `JMAK#s;34;1#`. The reboot command over SMS is the literal text `JMAK#REBOOT#`.\n\nParameters: 2 report interval, 12 server port, 13 server IP address, 16 overspeed event, 17 overspeed limit, 30 odometer, 34 output 1, 43 server domain name, 55 power cut event, 57 low battery event, 59 movement event, 93 reboot, 94 output 2, 167 output 3.\n\nSupported commands, the same list for TCP and SMS: custom (send the data as it is), engine stop (output 1 = 1), engine resume (output 1 = 0), output control (output 1, 2 or 3 by index, value from the data), periodic positions (report interval = frequency), set odometer, set connection (server IP when the server is an IP address, server domain otherwise, then server port), reboot (parameter 93 = 1 over TCP), set speed limit (overspeed event enabled = 1, then overspeed limit), low battery alarm and power removal alarm (event = 1 or 0 from the enable flag), movement alarm (event value from the data).\n\nExamples: set connection to jmak.com.br port 5259 over TCP is `$43;jmak.com.br;|12;5259;#`; over SMS to 191.233.246.121 port 5259 it is `JMAK#s;13;191.233.246.121#s;12;5259#`; disabling the low battery alarm over SMS is `JMAK#e;57;0#`.\n\nThe encoder class must be `org.traccar.protocol.JmakProtocolEncoder`, with a constructor `(Protocol protocol, boolean textChannel)` where `textChannel` is true for SMS. Register it in the JMAK protocol for both data and text (SMS) commands.\n\nDone when:\n- the commands above are encoded as described, over TCP and over SMS;\n- the change is covered by tests;\n- the existing test suite still passes.",
+    "tests": [
+      "src/test/java/org/traccar/protocol/JmakProtocolEncoderTest.java"
+    ],
+    "product": [
+      "src/main/java/org/traccar/protocol/JmakProtocol.java",
+      "src/main/java/org/traccar/protocol/JmakProtocolEncoder.java"
+    ]
+  },
+  {
+    "id": "traccar-3",
+    "sha": "9c62257e1b2d106083571057f0b33be57b4ef61d",
+    "kind": "other",
+    "text": "Traccar checks whether the straight segment between two consecutive positions crosses a geofence, so that a fast vehicle that passed through a geofence between two reports still triggers the event. This works for polygon geofences, but a polyline geofence (a route, a line) never reports that a segment crosses it.\n\nMake segment intersection work for polyline geofences: a segment crosses a polyline when it intersects any of its edges. A polyline is open: there is no edge between its last and its first point (unlike a polygon). Reuse the logic that polygons already use where you can, without changing how polygons behave.\n\nDone when:\n- a segment that crosses a polyline geofence is detected, and one that does not cross it (including one that would only cross the missing closing edge) is not;\n- polygon geofences behave as before;\n- the change is covered by tests;\n- the existing test suite still passes.",
+    "tests": [
+      "src/test/java/org/traccar/geofence/GeofencePolylineTest.java"
+    ],
+    "product": [
+      "src/main/java/org/traccar/geofence/GeofenceGeometry.java",
+      "src/main/java/org/traccar/geofence/GeofencePolygon.java",
+      "src/main/java/org/traccar/geofence/GeofencePolyline.java"
+    ]
+  }
+]

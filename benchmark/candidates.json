@@ -1,0 +1,591 @@
+[
+  {
+    "sha": "97b5e4063cbf4904d32e82cf4deb23a58fe4b7e0",
+    "date": "2026-10-30",
+    "subject": "Decode all JMAK CAN fields (#6100)",
+    "product": [
+      "src/main/java/org/traccar/protocol/JmakProtocolDecoder.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/protocol/JmakProtocolDecoderTest.java"
+    ],
+    "changed": 102
+  },
+  {
+    "sha": "d5124e7f550e2e2260c10a55a130f1e0fafef8bd",
+    "date": "2026-10-30",
+    "subject": "Add JMAK commands (#6095)",
+    "product": [
+      "src/main/java/org/traccar/protocol/JmakProtocol.java",
+      "src/main/java/org/traccar/protocol/JmakProtocolEncoder.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/protocol/JmakProtocolEncoderTest.java"
+    ],
+    "changed": 123
+  },
+  {
+    "sha": "e61712226d2d015913392b33b58fb2accdea998f",
+    "date": "2026-10-30",
+    "subject": "Update JMAK text format decoding (#6096)",
+    "product": [
+      "src/main/java/org/traccar/protocol/JmakProtocolDecoder.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/protocol/JmakProtocolDecoderTest.java"
+    ],
+    "changed": 66
+  },
+  {
+    "sha": "8c42bdcf79c137a0c02e1289b82f7314705140e3",
+    "date": "2026-10-22",
+    "subject": "Fix DualCam session interference (fix #6087)",
+    "product": [
+      "src/main/java/org/traccar/BaseMediaProtocolDecoder.java",
+      "src/main/java/org/traccar/protocol/DualcamProtocolDecoder.java",
+      "src/main/java/org/traccar/protocol/Jt1078ProtocolDecoder.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/BaseTest.java"
+    ],
+    "changed": 97
+  },
+  {
+    "sha": "5ba3800ac5c2f5c5cba2480aeeb9130f4575c966",
+    "date": "2026-10-12",
+    "subject": "Add Xexun3 protocol encoder (follow-up PR of #6063) (#6070)",
+    "product": [
+      "src/main/java/org/traccar/protocol/Xexun3Protocol.java",
+      "src/main/java/org/traccar/protocol/Xexun3ProtocolDecoder.java",
+      "src/main/java/org/traccar/protocol/Xexun3ProtocolEncoder.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/protocol/Xexun3ProtocolEncoderTest.java"
+    ],
+    "changed": 95
+  },
+  {
+    "sha": "323cdae38fdf101ea13b97196cfbdcb259101ed7",
+    "date": "2026-10-07",
+    "subject": "Handle invalid Minifinder frames",
+    "product": [
+      "src/main/java/org/traccar/protocol/Minifinder2FrameDecoder.java",
+      "src/main/java/org/traccar/protocol/Minifinder2Protocol.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/protocol/Minifinder2FrameDecoderTest.java"
+    ],
+    "changed": 56
+  },
+  {
+    "sha": "bdb7f6335cb4a75ec88fdcdc1a9de063b5497511",
+    "date": "2026-10-06",
+    "subject": "Add My Geocode (#6058)",
+    "product": [
+      "src/main/java/org/traccar/MainModule.java",
+      "src/main/java/org/traccar/geocoder/MyGeocodeGeocoder.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/geocoder/GeocoderTest.java"
+    ],
+    "changed": 71
+  },
+  {
+    "sha": "9b6440136704df21a542653a94dfacf2bcc4ec2c",
+    "date": "2026-10-03",
+    "subject": "Enforce line separators",
+    "product": [
+      ".editorconfig",
+      "src/main/java/org/traccar/LifecycleObject.java",
+      "src/main/java/org/traccar/api/security/LoginService.java",
+      "src/main/java/org/traccar/broadcast/BroadcastService.java",
+      "src/main/java/org/traccar/command/CommandSender.java",
+      "src/main/java/org/traccar/config/ConfigKey.java",
+      "src/main/java/org/traccar/config/ConfigSuffix.java",
+      "src/main/java/org/traccar/geocoder/BanGeocoder.java",
+      "src/main/java/org/traccar/geolocation/UnwiredGeolocationProvider.java",
+      "src/main/java/org/traccar/helper/ConcurrentWeakValueMap.java",
+      "src/main/java/org/traccar/helper/Hashing.java",
+      "src/main/java/org/traccar/helper/model/AttributeUtil.java",
+      "src/main/java/org/traccar/helper/model/DeviceUtil.java",
+      "src/main/java/org/traccar/model/Schedulable.java",
+      "src/main/java/org/traccar/model/UserRestrictions.java",
+      "src/main/java/org/traccar/protocol/AtrackProtocolDecoder.java",
+      "src/main/java/org/traccar/protocol/BstplProtocolDecoder.java",
+      "src/main/java/org/traccar/protocol/FifotrackProtocolDecoder.java",
+      "src/main/java/org/traccar/protocol/FleetGuideProtocolDecoder.java",
+      "src/main/java/org/traccar/protocol/Gps103ProtocolDecoder.java",
+      "src/main/java/org/traccar/protocol/NvsProtocolDecoder.java",
+      "src/main/java/org/traccar/protocol/NyitechProtocolDecoder.java",
+      "src/main/java/org/traccar/protocol/Pt60ProtocolDecoder.java",
+      "src/main/java/org/traccar/protocol/SuntechProtocolDecoder.java",
+      "src/main/java/org/traccar/protocol/XirgoProtocolDecoder.java",
+      "src/main/java/org/traccar/reports/RouteReportProvider.java",
+      "src/main/java/org/traccar/reports/model/BaseReportItem.java",
+      "src/main/java/org/traccar/session/ConnectionManager.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/protocol/AutoFonProtocolDecoderTest.java",
+      "src/test/java/org/traccar/protocol/Avl301ProtocolDecoderTest.java",
+      "src/test/java/org/traccar/protocol/CityeasyProtocolDecoderTest.java",
+      "src/test/java/org/traccar/protocol/FlextrackProtocolDecoderTest.java",
+      "src/test/java/org/traccar/protocol/Gl100ProtocolDecoderTest.java",
+      "src/test/java/org/traccar/protocol/GpsMarkerProtocolDecoderTest.java",
+      "src/test/java/org/traccar/protocol/Pt502ProtocolEncoderTest.java"
+    ],
+    "changed": 65
+  },
+  {
+    "sha": "0333aea165dcc3b716ee6bb7c5ad29bb06051be9",
+    "date": "2026-10-03",
+    "subject": "Fix indentation issues",
+    "product": [
+      "src/main/java/org/traccar/config/Keys.java",
+      "src/main/java/org/traccar/database/MediaManager.java",
+      "src/main/java/org/traccar/geocoder/FactualGeocoder.java",
+      "src/main/java/org/traccar/handler/GeocoderHandler.java",
+      "src/main/java/org/traccar/handler/GeolocationHandler.java",
+      "src/main/java/org/traccar/handler/MapMatcherHandler.java",
+      "src/main/java/org/traccar/handler/SpeedLimitHandler.java",
+      "src/main/java/org/traccar/handler/events/MaintenanceEventHandler.java",
+      "src/main/java/org/traccar/notificators/NotificatorFirebase.java",
+      "src/main/java/org/traccar/protocol/AtrackProtocolDecoder.java",
+      "src/main/java/org/traccar/protocol/Jt808ProtocolDecoder.java",
+      "src/main/java/org/traccar/protocol/LaipacProtocolDecoder.java",
+      "src/main/java/org/traccar/protocol/MiniFinderProtocolDecoder.java",
+      "src/main/java/org/traccar/protocol/OpenGtsProtocolDecoder.java",
+      "src/main/java/org/traccar/protocol/OwnTracksProtocolDecoder.java",
+      "src/main/java/org/traccar/protocol/RoboTrackFrameDecoder.java",
+      "src/main/java/org/traccar/protocol/TrvProtocolDecoder.java",
+      "src/main/java/org/traccar/schedule/TaskDeleteTemporary.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/protocol/IotmProtocolEncoderTest.java",
+      "src/test/java/org/traccar/reports/ReportUtilsTest.java",
+      "src/test/java/org/traccar/storage/QueryBuilderTest.java"
+    ],
+    "changed": 180
+  },
+  {
+    "sha": "1ea97a3c6828851043786297bd826b7096aa2043",
+    "date": "2026-10-02",
+    "subject": "Support Teltonika Iridium protocol",
+    "product": [
+      "src/main/java/org/traccar/config/PortConfigSuffix.java",
+      "src/main/java/org/traccar/protocol/TeltonikaIridiumProtocol.java",
+      "src/main/java/org/traccar/protocol/TeltonikaIridiumProtocolDecoder.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/protocol/TeltonikaIridiumProtocolDecoderTest.java"
+    ],
+    "changed": 140
+  },
+  {
+    "sha": "e1564c7aaa877ff7d769d55ae053e7ae2076872e",
+    "date": "2026-09-21",
+    "subject": "Replace Queclink FRI regex parsing",
+    "product": [
+      "src/main/java/org/traccar/protocol/Gl200TextProtocolDecoder.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/protocol/Gl200TextProtocolDecoderTest.java"
+    ],
+    "changed": 150
+  },
+  {
+    "sha": "523ef99ac967c7adb638710cd4b6263ce043594d",
+    "date": "2026-09-20",
+    "subject": "Add GV350CEU CAN support",
+    "product": [
+      "src/main/java/org/traccar/protocol/Gl200TextProtocolDecoder.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/protocol/Gl200TextProtocolDecoderTest.java"
+    ],
+    "changed": 74
+  },
+  {
+    "sha": "c3332bcc0d99f879b1461af89e9f618284754f09",
+    "date": "2026-09-14",
+    "subject": "Fix IOTM sensor value decoding",
+    "product": [
+      "src/main/java/org/traccar/protocol/IotmProtocolDecoder.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/protocol/IotmProtocolDecoderTest.java"
+    ],
+    "changed": 98
+  },
+  {
+    "sha": "caa134c2c1f010d3c97609d856b9b86ea685159c",
+    "date": "2026-09-06",
+    "subject": "Decode JT808 location query and parameter query responses (#5997)",
+    "product": [
+      "src/main/java/org/traccar/protocol/Jt808ProtocolDecoder.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/protocol/Jt808ProtocolDecoderTest.java"
+    ],
+    "changed": 74
+  },
+  {
+    "sha": "cfee3e178e0ec603000ff0f2348bf6e166b55f8c",
+    "date": "2026-09-03",
+    "subject": "Add JT808 downlink command types (#5998)",
+    "product": [
+      "src/main/java/org/traccar/model/Command.java",
+      "src/main/java/org/traccar/protocol/Jt808Protocol.java",
+      "src/main/java/org/traccar/protocol/Jt808ProtocolDecoder.java",
+      "src/main/java/org/traccar/protocol/Jt808ProtocolEncoder.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/protocol/Jt808ProtocolEncoderTest.java"
+    ],
+    "changed": 93
+  },
+  {
+    "sha": "a1859cc8e2b2e4ebe497f83408512c38b1de5cbb",
+    "date": "2026-08-30",
+    "subject": "Exclude fuel fillings and drains from reports",
+    "product": [
+      "src/main/java/org/traccar/reports/SummaryReportProvider.java",
+      "src/main/java/org/traccar/reports/common/ReportUtils.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/reports/ReportUtilsTest.java"
+    ],
+    "changed": 63
+  },
+  {
+    "sha": "64f9aadbe54f48c1acb6892dc0f6e031b9a3307d",
+    "date": "2026-08-20",
+    "subject": "Support Akroz reports in TAIP protocol (#5984)",
+    "product": [
+      "src/main/java/org/traccar/protocol/TaipProtocolDecoder.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/protocol/TaipProtocolDecoderTest.java"
+    ],
+    "changed": 126
+  },
+  {
+    "sha": "68701664dfc134bc1b288ae57659da59c0db3c5c",
+    "date": "2026-08-14",
+    "subject": "Decode sensor and Bluetooth data",
+    "product": [
+      "src/main/java/org/traccar/protocol/Jt808ProtocolDecoder.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/protocol/Jt808ProtocolDecoderTest.java"
+    ],
+    "changed": 217
+  },
+  {
+    "sha": "9c62257e1b2d106083571057f0b33be57b4ef61d",
+    "date": "2026-08-13",
+    "subject": "Add intersection for polyline geofences",
+    "product": [
+      "src/main/java/org/traccar/geofence/GeofenceGeometry.java",
+      "src/main/java/org/traccar/geofence/GeofencePolygon.java",
+      "src/main/java/org/traccar/geofence/GeofencePolyline.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/geofence/GeofencePolylineTest.java"
+    ],
+    "changed": 32
+  },
+  {
+    "sha": "83cb935e4cb7e0bd4bb2dfbd72199e689518e45e",
+    "date": "2026-07-10",
+    "subject": "Enable database result streaming",
+    "product": [
+      "src/main/java/org/traccar/config/Keys.java",
+      "src/main/java/org/traccar/storage/DatabaseStorage.java",
+      "src/main/java/org/traccar/storage/QueryBuilder.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/storage/QueryBuilderTest.java"
+    ],
+    "changed": 34
+  },
+  {
+    "sha": "db5bb1ce1277717b53849710cfd82d16f51520cf",
+    "date": "2026-07-10",
+    "subject": "Limit number of positions in reports",
+    "product": [
+      "src/main/java/org/traccar/api/resource/PositionResource.java",
+      "src/main/java/org/traccar/config/Keys.java",
+      "src/main/java/org/traccar/helper/model/PositionUtil.java",
+      "src/main/java/org/traccar/reports/CombinedReportProvider.java",
+      "src/main/java/org/traccar/reports/CsvExportProvider.java",
+      "src/main/java/org/traccar/reports/GpxExportProvider.java",
+      "src/main/java/org/traccar/reports/KmlExportProvider.java",
+      "src/main/java/org/traccar/reports/RouteReportProvider.java",
+      "src/main/java/org/traccar/reports/SummaryReportProvider.java",
+      "src/main/java/org/traccar/reports/common/ReportUtils.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/reports/GpxExportProviderTest.java",
+      "src/test/java/org/traccar/reports/KmlExportProviderTest.java"
+    ],
+    "changed": 66
+  },
+  {
+    "sha": "e1e0a2ccd868f97aa2251efd9a4a3705442ca605",
+    "date": "2026-07-09",
+    "subject": "Add Jimi 4G device status",
+    "product": [
+      "src/main/java/org/traccar/protocol/Gt06ProtocolDecoder.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/protocol/Gt06ProtocolDecoderTest.java"
+    ],
+    "changed": 65
+  },
+  {
+    "sha": "35555d03ecb50cf46b1c376dfd9ea2132edd092b",
+    "date": "2026-06-26",
+    "subject": "Support GV500CNA binary format",
+    "product": [
+      "src/main/java/org/traccar/protocol/Gl200BinaryProtocolDecoder.java",
+      "src/main/java/org/traccar/protocol/Gl200FrameDecoder.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/protocol/Gl200BinaryProtocolDecoderTest.java",
+      "src/test/java/org/traccar/protocol/Gl200FrameDecoderTest.java"
+    ],
+    "changed": 109
+  },
+  {
+    "sha": "4e8b605bf7d7c4584491b1095b3a87186ee0a9c7",
+    "date": "2026-06-17",
+    "subject": "Support R16H cell data",
+    "product": [
+      "src/main/java/org/traccar/protocol/R16hProtocolDecoder.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/protocol/R16hProtocolDecoderTest.java"
+    ],
+    "changed": 80
+  },
+  {
+    "sha": "5d4d6205bc62a0942132a4e55d8f5bb3eaaf741b",
+    "date": "2026-06-16",
+    "subject": "Fix TLD2-D driver behavior (fix #5556)",
+    "product": [
+      "src/main/java/org/traccar/protocol/T800xProtocolDecoder.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/protocol/T800xProtocolDecoderTest.java"
+    ],
+    "changed": 75
+  },
+  {
+    "sha": "dc433af68560b43cc9766982bf9548e8bb1ef50c",
+    "date": "2026-06-02",
+    "subject": "Add Jimi IoT upload handler",
+    "product": [
+      "src/main/java/org/traccar/config/PortConfigSuffix.java",
+      "src/main/java/org/traccar/protocol/JimiPhotoProtocol.java",
+      "src/main/java/org/traccar/protocol/JimiPhotoProtocolDecoder.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/protocol/JimiPhotoProtocolDecoderTest.java"
+    ],
+    "changed": 178
+  },
+  {
+    "sha": "19a7910ba0ca12cacc0ccfdffc780ac7784d0ed0",
+    "date": "2026-05-27",
+    "subject": "Support WMCS AM120 protocol",
+    "product": [
+      "src/main/java/org/traccar/protocol/T55ProtocolDecoder.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/protocol/T55ProtocolDecoderTest.java"
+    ],
+    "changed": 80
+  },
+  {
+    "sha": "ec6f359e14b8012c2e51c124ea97b3136890fbed",
+    "date": "2026-05-23",
+    "subject": "Support Tzone TT19EX device (fix #5231)",
+    "product": [
+      "src/main/java/org/traccar/protocol/TzoneProtocolDecoder.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/protocol/TzoneProtocolDecoderTest.java"
+    ],
+    "changed": 159
+  },
+  {
+    "sha": "19a0947d765f955a75768294a7c003c1bd1464c9",
+    "date": "2026-05-23",
+    "subject": "Implement MaxPB protocol (fix #4980)",
+    "product": [
+      "src/main/java/org/traccar/config/PortConfigSuffix.java",
+      "src/main/java/org/traccar/protocol/MaxPbFrameDecoder.java",
+      "src/main/java/org/traccar/protocol/MaxPbProtocol.java",
+      "src/main/java/org/traccar/protocol/MaxPbProtocolDecoder.java",
+      "src/main/proto/MaxPbMessage.proto"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/protocol/MaxPbFrameDecoderTest.java",
+      "src/test/java/org/traccar/protocol/MaxPbProtocolDecoderTest.java"
+    ],
+    "changed": 327
+  },
+  {
+    "sha": "6918e9f8f5d44920a34569b514cb6c7e6e2966c1",
+    "date": "2026-05-20",
+    "subject": "Implement R16H protocol",
+    "product": [
+      "src/main/java/org/traccar/config/PortConfigSuffix.java",
+      "src/main/java/org/traccar/protocol/R16hProtocol.java",
+      "src/main/java/org/traccar/protocol/R16hProtocolDecoder.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/protocol/R16hProtocolDecoderTest.java"
+    ],
+    "changed": 147
+  },
+  {
+    "sha": "25a5bbb062cd60766dd7ec227a8e36c0afa7a9f6",
+    "date": "2026-05-14",
+    "subject": "Add optimized attribute map",
+    "product": [
+      "src/main/java/org/traccar/model/AttributeMap.java",
+      "src/main/java/org/traccar/model/ExtendedModel.java",
+      "src/main/java/org/traccar/model/QueuedCommand.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/model/AttributeMapTest.java"
+    ],
+    "changed": 238
+  },
+  {
+    "sha": "d2ed2c5c4da0a048d91dbb53c10bbc441c4007f3",
+    "date": "2026-05-13",
+    "subject": "Use MethodHandle in storage layer",
+    "product": [
+      "src/main/java/org/traccar/handler/ComputedAttributesProvider.java",
+      "src/main/java/org/traccar/helper/ReflectionCache.java",
+      "src/main/java/org/traccar/storage/MemoryStorage.java",
+      "src/main/java/org/traccar/storage/QueryBuilder.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/storage/QueryBuilderTest.java"
+    ],
+    "changed": 137
+  },
+  {
+    "sha": "866681f897bf4056e31f8065a905c39a04bb70e6",
+    "date": "2026-05-12",
+    "subject": "Implement Radshid protocol (fix #5235)",
+    "product": [
+      "src/main/java/org/traccar/config/PortConfigSuffix.java",
+      "src/main/java/org/traccar/protocol/RadshidProtocol.java",
+      "src/main/java/org/traccar/protocol/RadshidProtocolDecoder.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/protocol/RadshidFrameDecoderTest.java",
+      "src/test/java/org/traccar/protocol/RadshidProtocolDecoderTest.java"
+    ],
+    "changed": 195
+  },
+  {
+    "sha": "7e880a701475886ff0bd551fb07db829480004c9",
+    "date": "2026-05-10",
+    "subject": "Add Xexun v03 protocol (fix #5835)",
+    "product": [
+      "src/main/java/org/traccar/config/PortConfigSuffix.java",
+      "src/main/java/org/traccar/protocol/Xexun3Protocol.java",
+      "src/main/java/org/traccar/protocol/Xexun3ProtocolDecoder.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/protocol/Xexun3FrameDecoderTest.java",
+      "src/test/java/org/traccar/protocol/Xexun3ProtocolDecoderTest.java"
+    ],
+    "changed": 155
+  },
+  {
+    "sha": "d8bd17b2408a0973ad61efcf08408eccedda9195",
+    "date": "2026-05-10",
+    "subject": "Extract computed attributes provider",
+    "product": [
+      "src/main/java/org/traccar/api/resource/AttributeResource.java",
+      "src/main/java/org/traccar/handler/ComputedAttributesHandler.java",
+      "src/main/java/org/traccar/handler/ComputedAttributesProvider.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/handler/ComputedAttributesTest.java"
+    ],
+    "changed": 246
+  },
+  {
+    "sha": "6d9f3e7c46477cd01872d0a7dac448e8ec6785d8",
+    "date": "2026-05-08",
+    "subject": "Add snap to road map matcher",
+    "product": [
+      "src/main/java/org/traccar/MainModule.java",
+      "src/main/java/org/traccar/ProcessingHandler.java",
+      "src/main/java/org/traccar/config/Keys.java",
+      "src/main/java/org/traccar/geocoder/JsonGeocoder.java",
+      "src/main/java/org/traccar/handler/MapMatcherHandler.java",
+      "src/main/java/org/traccar/{geocoder/GeocoderException.java => mapmatcher/MapMatcher.java}",
+      "src/main/java/org/traccar/mapmatcher/TraccarMapMatcher.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/mapmatcher/MapMatcherTest.java"
+    ],
+    "changed": 193
+  },
+  {
+    "sha": "152e0322bc242dbb6c6c6e9d2b04aaafd9458a1b",
+    "date": "2026-05-08",
+    "subject": "Support HYN600 multiple locations",
+    "product": [
+      "src/main/java/org/traccar/protocol/Hyn600ProtocolDecoder.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/protocol/Hyn600ProtocolDecoderTest.java"
+    ],
+    "changed": 124
+  },
+  {
+    "sha": "5c9d0449ce0fcb8905edb49e2ef7a3868b1a0f97",
+    "date": "2026-04-30",
+    "subject": "Add Jimi JC371/JC181/JC182/JC450/JC451 dashcam support to JT808 protocol (#5864)",
+    "product": [
+      "src/main/java/org/traccar/protocol/Jt808ProtocolDecoder.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/protocol/Jt808ProtocolDecoderTest.java"
+    ],
+    "changed": 82
+  },
+  {
+    "sha": "ade034b3e3ec034cd6e59343d474c11db00192de",
+    "date": "2026-04-15",
+    "subject": "Cleanup Arnavi protocol",
+    "product": [
+      "src/main/java/org/traccar/protocol/ArnaviBinaryProtocolDecoder.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/protocol/ArnaviBinaryProtocolDecoderTest.java"
+    ],
+    "changed": 147
+  },
+  {
+    "sha": "f20b2e68ab5b7ee37125ea5bacb1de7a2c281bb6",
+    "date": "2026-04-15",
+    "subject": "Refactor ArnaviBinaryProtocolDecoder constants and methods (#5795)",
+    "product": [
+      "src/main/java/org/traccar/protocol/ArnaviBinaryProtocolDecoder.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/protocol/ArnaviBinaryProtocolDecoderTest.java"
+    ],
+    "changed": 254
+  }
+]

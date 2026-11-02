@@ -1,0 +1,42 @@
+[
+  {
+    "id": "traccar-1",
+    "sha": "97b5e4063cbf4904d32e82cf4deb23a58fe4b7e0",
+    "kind": "protocol decoder",
+    "text": "The JMAK protocol decoder (text format) ignores most of the CAN bus fields that newer JMAK devices send. The CAN block of a message starts with a hexadecimal bit mask; each set bit means that one field follows, in bit order. Today the decoder reads the fields up to bit 14 and stops.\n\nDecode the remaining fields, bits 15 to 38, in this order, and store them as position attributes with these names and types:\n\n15 tripFuelUsed (decimal), 16 engineTorque (decimal), 17 engine load (decimal, the standard engine load key), 18 fuelEconomy (decimal), 19 oilPressure (decimal), 20 brakePressure1 (decimal), 21 brakePressure2 (decimal), 22 pto (integer), 23 gear (integer), 24 engineBrake (decimal), 25 transmissionOilTemp (decimal), 26 transmissionOilPressure (decimal), 27 boostPressure (decimal), 28 intakeTemp (decimal), 29 fuelTemp (decimal), 30 adBlueLevel (decimal), 31 adBlueTemp (decimal), 32 scrPressure (decimal), 33 dpfPressure (decimal), 34 dpfRegeneration (integer), 35 ambientTemperature (decimal), 36 batteryVoltage (decimal), 37 wiper (integer), 38 instantFuelConsumption (decimal).\n\nAlso, the fuel field comes with a unit field just before it. Today the unit is skipped and the value is always stored as fuel in liters. When the unit is \"L\" (or absent), keep storing the fuel in liters; for any other unit, store the value as the fuel level (a percentage) instead.\n\nDone when:\n- a message with these CAN fields is decoded into the attributes above;\n- the change is covered by tests;\n- the existing test suite still passes.",
+    "tests": [
+      "src/test/java/org/traccar/protocol/JmakProtocolDecoderTest.java"
+    ],
+    "product": [
+      "src/main/java/org/traccar/protocol/JmakProtocolDecoder.java"
+    ]
+  },
+  {
+    "id": "traccar-2",
+    "sha": "d5124e7f550e2e2260c10a55a130f1e0fafef8bd",
+    "kind": "protocol encoder",
+    "text": "Traccar can receive positions from JMAK devices but cannot send them commands. Add command support for JMAK, over the TCP connection and over SMS.\n\nDevice documentation: a command sets device parameters, each identified by a number.\n- Over TCP, a command is `$`, then the parameters separated by `|`, then `#`. Each parameter is written `<id>;<value>;`. Example: `$34;1;#`.\n- Over SMS, a command is `JMAK#`, then the parameters separated by `#`, then `#`. Each parameter is written `<action>;<id>;<value>`, where the action is `s` to set a value and `e` to enable or disable an event. Example: `JMAK#s;34;1#`. The reboot command over SMS is the literal text `JMAK#REBOOT#`.\n\nParameters: 2 report interval, 12 server port, 13 server IP address, 16 overspeed event, 17 overspeed limit, 30 odometer, 34 output 1, 43 server domain name, 55 power cut event, 57 low battery event, 59 movement event, 93 reboot, 94 output 2, 167 output 3.\n\nSupported commands, the same list for TCP and SMS: custom (send the data as it is), engine stop (output 1 = 1), engine resume (output 1 = 0), output control (output 1, 2 or 3 by index, value from the data), periodic positions (report interval = frequency), set odometer, set connection (server IP when the server is an IP address, server domain otherwise, then server port), reboot (parameter 93 = 1 over TCP), set speed limit (overspeed event enabled = 1, then overspeed limit), low battery alarm and power removal alarm (event = 1 or 0 from the enable flag), movement alarm (event value from the data).\n\nExamples: set connection to jmak.com.br port 5259 over TCP is `$43;jmak.com.br;|12;5259;#`; over SMS to 191.233.246.121 port 5259 it is `JMAK#s;13;191.233.246.121#s;12;5259#`; disabling the low battery alarm over SMS is `JMAK#e;57;0#`.\n\nThe encoder class must be `org.traccar.protocol.JmakProtocolEncoder`, with a constructor `(Protocol protocol, boolean textChannel)` where `textChannel` is true for SMS. Register it in the JMAK protocol for both data and text (SMS) commands.\n\nDone when:\n- the commands above are encoded as described, over TCP and over SMS;\n- the change is covered by tests;\n- the existing test suite still passes.",
+    "tests": [
+      "src/test/java/org/traccar/protocol/JmakProtocolEncoderTest.java"
+    ],
+    "product": [
+      "src/main/java/org/traccar/protocol/JmakProtocol.java",
+      "src/main/java/org/traccar/protocol/JmakProtocolEncoder.java"
+    ]
+  },
+  {
+    "id": "traccar-3",
+    "sha": "8fec46eb3235789d6717e3bca18d4532adeaf7e7",
+    "kind": "other (position filtering)",
+    "revert_patch": "patches/8fec46eb32.patch",
+    "text": "Position filtering (the filter handler that drops invalid, zero, duplicate, outdated, future, past, inaccurate, approximate, static, too close, too fast or too frequent positions) is configured only in the server configuration, so all devices share the same settings. Users want different filter settings for different devices.\n\nMake these filter settings configurable per device: invalid, zero, duplicate, outdated, future, past, accuracy, approximate, static, distance, max speed, min period, daily limit, daily limit interval and skip limit. Mark the keys as device keys, so they can be set as device or group attributes. When a position is processed, resolve each setting for the device of that position with the same lookup that other per-device settings use: the device attribute first, then its groups, then the server configuration, then the default value of the key (for example, the future filter defaults to 86400 seconds, so a position far in the future is filtered even when nothing is configured). A setting of 0 or false still disables that filter.\n\nBecause the settings are now read for each position, the filter handler no longer reads them once from the configuration in its constructor: it is built with only the cache manager and the statistics manager (new FilterHandler(cacheManager, statisticsManager)).\n\nDone when:\n- a filter setting on a device or group changes the filtering of that device only;\n- the change is covered by tests;\n- the existing test suite still passes.",
+    "tests": [
+      "src/test/java/org/traccar/handler/FilterHandlerTest.java"
+    ],
+    "product": [
+      "src/main/java/org/traccar/MainModule.java",
+      "src/main/java/org/traccar/config/Keys.java",
+      "src/main/java/org/traccar/handler/FilterHandler.java"
+    ]
+  }
+]

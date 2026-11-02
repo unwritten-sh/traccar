@@ -1,0 +1,10 @@
+{
+  "arm": "control",
+  "seconds": 113,
+  "command": "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew test --rerun --no-daemon",
+  "code": 0,
+  "tests": null,
+  "tail": "",
+  "reports": 428,
+  "ready": true
+}

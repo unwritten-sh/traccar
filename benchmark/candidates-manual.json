@@ -1,0 +1,17 @@
+[
+  {
+    "sha": "8fec46eb3235789d6717e3bca18d4532adeaf7e7",
+    "date": "2026-04-11",
+    "subject": "Support per device filter config",
+    "product": [
+      "src/main/java/org/traccar/MainModule.java",
+      "src/main/java/org/traccar/config/Keys.java",
+      "src/main/java/org/traccar/handler/FilterHandler.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/handler/FilterHandlerTest.java"
+    ],
+    "changed": 136,
+    "revert_patch": "patches/8fec46eb32.patch"
+  }
+]

@@ -1,0 +1,538 @@
+diff --git a/docs/harness/log.md b/docs/harness/log.md
+index 3a313eb37..05047ec89 100644
+--- a/docs/harness/log.md
++++ b/docs/harness/log.md
+@@ -105,3 +105,11 @@ Risks seen before the harness:
+ - full-gate: Not in any gate: tools/test-integration.py and the other Python tools (they need a running server), and tests on MySQL, PostgreSQL or SQL Server (unit tests use H2 or memory only). Recorded in docs/harness/log.md.
+ - local-env: debug.xml points web.path to ./traccar-web/simple, and the server stops at startup when that folder is missing (the submodule is empty in this checkout). make dev works around it with an API-only run (CONFIG_USE_ENVIRONMENT_VARIABLES=true, WEB_PATH=./target/web). The web UI cannot be served locally until the submodule question is answered.
+ - fast-gate: This machine has only JDK 17 (default) and Homebrew JDK 25. The gates were verified on JDK 25 through tools/harness/java-home.sh. CI uses Temurin 21. Every Gradle run also needs Maven Central, because build.gradle resolves versions at configuration time.
++
++## 2026-11-02: position filters configurable per device
++
++Fifteen filter settings (invalid, zero, duplicate, outdated, future, past, accuracy, approximate, static, distance, max speed, min period, daily limit, daily limit interval, skip limit) are now device keys in `config/Keys.java`. The `FilterHandler` resolves each one for the position's device with `AttributeUtil.lookup`: device attribute, then groups, then server config, then the key default. The handler constructor is now `FilterHandler(cacheManager, statisticsManager)`.
++
++What I learned: the keys had `null` defaults, so they now have explicit defaults (false, 0 or 0L) to avoid unboxing errors. `filter.future` keeps its default of 86400 seconds, so a position far in the future is filtered when nothing is set; a device or group value of 0 disables it. `filter.globalDailyLimit` stays server-only.
++
++Left: no test covers the daily limit, min period, distance or max speed settings per device; they use the same lookup, but only the invalid, zero, future and group cases are tested.
+diff --git a/src/main/java/org/traccar/MainModule.java b/src/main/java/org/traccar/MainModule.java
+index f2d6d207b..524430e2a 100644
+--- a/src/main/java/org/traccar/MainModule.java
++++ b/src/main/java/org/traccar/MainModule.java
+@@ -367,7 +367,7 @@ public class MainModule extends AbstractModule {
+     public static FilterHandler provideFilterHandler(
+             Config config, CacheManager cacheManager, StatisticsManager statisticsManager) {
+         if (config.getBoolean(Keys.FILTER_ENABLE)) {
+-            return new FilterHandler(config, cacheManager, statisticsManager);
++            return new FilterHandler(cacheManager, statisticsManager);
+         }
+         return null;
+     }
+diff --git a/src/main/java/org/traccar/config/Keys.java b/src/main/java/org/traccar/config/Keys.java
+index cb3283472..d2b1f78c1 100644
+--- a/src/main/java/org/traccar/config/Keys.java
++++ b/src/main/java/org/traccar/config/Keys.java
+@@ -1706,7 +1706,8 @@ public final class Keys {
+      */
+     public static final ConfigKey<Boolean> FILTER_INVALID = new BooleanConfigKey(
+             "filter.invalid",
+-            List.of(KeyType.CONFIG));
++            List.of(KeyType.CONFIG, KeyType.DEVICE),
++            false);
+ 
+     /**
+      * Filter zero coordinates. Zero latitude and longitude are theoretically valid values, but in practice they
+@@ -1714,14 +1715,16 @@ public final class Keys {
+      */
+     public static final ConfigKey<Boolean> FILTER_ZERO = new BooleanConfigKey(
+             "filter.zero",
+-            List.of(KeyType.CONFIG));
++            List.of(KeyType.CONFIG, KeyType.DEVICE),
++            false);
+ 
+     /**
+      * Filter duplicate records (duplicates are detected by time value).
+      */
+     public static final ConfigKey<Boolean> FILTER_DUPLICATE = new BooleanConfigKey(
+             "filter.duplicate",
+-            List.of(KeyType.CONFIG));
++            List.of(KeyType.CONFIG, KeyType.DEVICE),
++            false);
+ 
+     /**
+      * Filter messages that do not have GPS location. If they are not filtered, they will include the last known
+@@ -1729,7 +1732,8 @@ public final class Keys {
+      */
+     public static final ConfigKey<Boolean> FILTER_OUTDATED = new BooleanConfigKey(
+             "filter.outdated",
+-            List.of(KeyType.CONFIG));
++            List.of(KeyType.CONFIG, KeyType.DEVICE),
++            false);
+ 
+     /**
+      * Filter records with fix time in the future. The value is specified in seconds. Records that have fix time more
+@@ -1737,7 +1741,7 @@ public final class Keys {
+      */
+     public static final ConfigKey<Long> FILTER_FUTURE = new LongConfigKey(
+             "filter.future",
+-            List.of(KeyType.CONFIG),
++            List.of(KeyType.CONFIG, KeyType.DEVICE),
+             86400L);
+ 
+     /**
+@@ -1746,28 +1750,32 @@ public final class Keys {
+      */
+     public static final ConfigKey<Long> FILTER_PAST = new LongConfigKey(
+             "filter.past",
+-            List.of(KeyType.CONFIG));
++            List.of(KeyType.CONFIG, KeyType.DEVICE),
++            0L);
+ 
+     /**
+      * Filter positions with accuracy less than specified value in meters.
+      */
+     public static final ConfigKey<Integer> FILTER_ACCURACY = new IntegerConfigKey(
+             "filter.accuracy",
+-            List.of(KeyType.CONFIG));
++            List.of(KeyType.CONFIG, KeyType.DEVICE),
++            0);
+ 
+     /**
+      * Filter cell and wifi locations that are coming from geolocation provider.
+      */
+     public static final ConfigKey<Boolean> FILTER_APPROXIMATE = new BooleanConfigKey(
+             "filter.approximate",
+-            List.of(KeyType.CONFIG));
++            List.of(KeyType.CONFIG, KeyType.DEVICE),
++            false);
+ 
+     /**
+      * Filter positions with exactly zero speed values.
+      */
+     public static final ConfigKey<Boolean> FILTER_STATIC = new BooleanConfigKey(
+             "filter.static",
+-            List.of(KeyType.CONFIG));
++            List.of(KeyType.CONFIG, KeyType.DEVICE),
++            false);
+ 
+     /**
+      * Filter records by distance. The value is specified in meters. If the new position is closer than this value to
+@@ -1775,7 +1783,8 @@ public final class Keys {
+      */
+     public static final ConfigKey<Integer> FILTER_DISTANCE = new IntegerConfigKey(
+             "filter.distance",
+-            List.of(KeyType.CONFIG));
++            List.of(KeyType.CONFIG, KeyType.DEVICE),
++            0);
+ 
+     /**
+      * Filter records by Maximum Speed value in knots. Can be used to filter jumps to far locations even if Position
+@@ -1785,21 +1794,24 @@ public final class Keys {
+      */
+     public static final ConfigKey<Integer> FILTER_MAX_SPEED = new IntegerConfigKey(
+             "filter.maxSpeed",
+-            List.of(KeyType.CONFIG));
++            List.of(KeyType.CONFIG, KeyType.DEVICE),
++            0);
+ 
+     /**
+      * Filter position if time from previous position is less than specified value in seconds.
+      */
+     public static final ConfigKey<Integer> FILTER_MIN_PERIOD = new IntegerConfigKey(
+             "filter.minPeriod",
+-            List.of(KeyType.CONFIG));
++            List.of(KeyType.CONFIG, KeyType.DEVICE),
++            0);
+ 
+     /**
+      * Throttle positions if the daily limit is exceeded for the device.
+      */
+     public static final ConfigKey<Integer> FILTER_DAILY_LIMIT = new IntegerConfigKey(
+             "filter.dailyLimit",
+-            List.of(KeyType.CONFIG));
++            List.of(KeyType.CONFIG, KeyType.DEVICE),
++            0);
+ 
+     /**
+      * Throttle positions if the daily stored position limit is reached across all devices on this server.
+@@ -1815,7 +1827,8 @@ public final class Keys {
+      */
+     public static final ConfigKey<Integer> FILTER_DAILY_LIMIT_INTERVAL = new IntegerConfigKey(
+             "filter.dailyLimitInterval",
+-            List.of(KeyType.CONFIG));
++            List.of(KeyType.CONFIG, KeyType.DEVICE),
++            0);
+ 
+     /**
+      * Time limit for filtering in seconds. If the time difference between when the last position was received by the
+@@ -1824,7 +1837,8 @@ public final class Keys {
+      */
+     public static final ConfigKey<Long> FILTER_SKIP_LIMIT = new LongConfigKey(
+             "filter.skipLimit",
+-            List.of(KeyType.CONFIG));
++            List.of(KeyType.CONFIG, KeyType.DEVICE),
++            0L);
+ 
+     /**
+      * List of attributes that prevent filtering. If any attribute mentioned in this config key changed value
+diff --git a/src/main/java/org/traccar/handler/FilterHandler.java b/src/main/java/org/traccar/handler/FilterHandler.java
+index c40f49285..8fdf8cd61 100644
+--- a/src/main/java/org/traccar/handler/FilterHandler.java
++++ b/src/main/java/org/traccar/handler/FilterHandler.java
+@@ -17,7 +17,7 @@ package org.traccar.handler;
+ 
+ import org.slf4j.Logger;
+ import org.slf4j.LoggerFactory;
+-import org.traccar.config.Config;
++import org.traccar.config.ConfigKey;
+ import org.traccar.config.Keys;
+ import org.traccar.database.StatisticsManager;
+ import org.traccar.helper.UnitsConverter;
+@@ -36,61 +36,33 @@ public class FilterHandler extends BasePositionHandler {
+ 
+     private static final Logger LOGGER = LoggerFactory.getLogger(FilterHandler.class);
+ 
+-    private final boolean filterInvalid;
+-    private final boolean filterZero;
+-    private final boolean filterDuplicate;
+-    private final boolean filterOutdated;
+-    private final long filterFuture;
+-    private final long filterPast;
+-    private final boolean filterApproximate;
+-    private final int filterAccuracy;
+-    private final boolean filterStatic;
+-    private final int filterDistance;
+-    private final int filterMaxSpeed;
+-    private final long filterMinPeriod;
+-    private final int filterDailyLimit;
+-    private final int globalDailyLimit;
+-    private final long filterDailyLimitInterval;
+-    private final long skipLimit;
+-
+     private final CacheManager cacheManager;
+     private final StatisticsManager statisticsManager;
+ 
+     @Inject
+-    public FilterHandler(
+-            Config config, CacheManager cacheManager, StatisticsManager statisticsManager) {
+-        filterInvalid = config.getBoolean(Keys.FILTER_INVALID);
+-        filterZero = config.getBoolean(Keys.FILTER_ZERO);
+-        filterDuplicate = config.getBoolean(Keys.FILTER_DUPLICATE);
+-        filterOutdated = config.getBoolean(Keys.FILTER_OUTDATED);
+-        filterFuture = config.getLong(Keys.FILTER_FUTURE) * 1000;
+-        filterPast = config.getLong(Keys.FILTER_PAST) * 1000;
+-        filterAccuracy = config.getInteger(Keys.FILTER_ACCURACY);
+-        filterApproximate = config.getBoolean(Keys.FILTER_APPROXIMATE);
+-        filterStatic = config.getBoolean(Keys.FILTER_STATIC);
+-        filterDistance = config.getInteger(Keys.FILTER_DISTANCE);
+-        filterMaxSpeed = config.getInteger(Keys.FILTER_MAX_SPEED);
+-        filterMinPeriod = config.getInteger(Keys.FILTER_MIN_PERIOD) * 1000L;
+-        filterDailyLimit = config.getInteger(Keys.FILTER_DAILY_LIMIT);
+-        globalDailyLimit = config.getInteger(Keys.FILTER_GLOBAL_DAILY_LIMIT);
+-        filterDailyLimitInterval = config.getInteger(Keys.FILTER_DAILY_LIMIT_INTERVAL) * 1000L;
+-        skipLimit = config.getLong(Keys.FILTER_SKIP_LIMIT) * 1000;
++    public FilterHandler(CacheManager cacheManager, StatisticsManager statisticsManager) {
+         this.cacheManager = cacheManager;
+         this.statisticsManager = statisticsManager;
+     }
+ 
++    private <T> T lookup(ConfigKey<T> key, long deviceId) {
++        return AttributeUtil.lookup(cacheManager, key, deviceId);
++    }
++
+     private boolean filterInvalid(Position position) {
+-        return filterInvalid && (!position.getValid()
++        return lookup(Keys.FILTER_INVALID, position.getDeviceId()) && (!position.getValid()
+                 || position.getLatitude() > 90 || position.getLongitude() > 180
+                 || position.getLatitude() < -90 || position.getLongitude() < -180);
+     }
+ 
+     private boolean filterZero(Position position) {
+-        return filterZero && position.getLatitude() == 0.0 && position.getLongitude() == 0.0;
++        return lookup(Keys.FILTER_ZERO, position.getDeviceId())
++                && position.getLatitude() == 0.0 && position.getLongitude() == 0.0;
+     }
+ 
+     private boolean filterDuplicate(Position position, Position last) {
+-        if (filterDuplicate && last != null && position.getFixTime().equals(last.getFixTime())) {
++        if (lookup(Keys.FILTER_DUPLICATE, position.getDeviceId())
++                && last != null && position.getFixTime().equals(last.getFixTime())) {
+             for (String key : position.getAttributes().keySet()) {
+                 if (!last.hasAttribute(key)) {
+                     return false;
+@@ -102,30 +74,35 @@ public class FilterHandler extends BasePositionHandler {
+     }
+ 
+     private boolean filterOutdated(Position position) {
+-        return filterOutdated && position.getOutdated();
++        return lookup(Keys.FILTER_OUTDATED, position.getDeviceId()) && position.getOutdated();
+     }
+ 
+     private boolean filterFuture(Position position) {
++        long filterFuture = lookup(Keys.FILTER_FUTURE, position.getDeviceId()) * 1000;
+         return filterFuture != 0 && position.getFixTime().getTime() > System.currentTimeMillis() + filterFuture;
+     }
+ 
+     private boolean filterPast(Position position) {
++        long filterPast = lookup(Keys.FILTER_PAST, position.getDeviceId()) * 1000;
+         return filterPast != 0 && position.getFixTime().getTime() < System.currentTimeMillis() - filterPast;
+     }
+ 
+     private boolean filterAccuracy(Position position) {
++        int filterAccuracy = lookup(Keys.FILTER_ACCURACY, position.getDeviceId());
+         return filterAccuracy != 0 && position.getAccuracy() > filterAccuracy;
+     }
+ 
+     private boolean filterApproximate(Position position) {
+-        return filterApproximate && position.getBoolean(Position.KEY_APPROXIMATE);
++        return lookup(Keys.FILTER_APPROXIMATE, position.getDeviceId())
++                && position.getBoolean(Position.KEY_APPROXIMATE);
+     }
+ 
+     private boolean filterStatic(Position position) {
+-        return filterStatic && position.getSpeed() == 0.0;
++        return lookup(Keys.FILTER_STATIC, position.getDeviceId()) && position.getSpeed() == 0.0;
+     }
+ 
+     private boolean filterDistance(Position position, Position last) {
++        int filterDistance = lookup(Keys.FILTER_DISTANCE, position.getDeviceId());
+         if (filterDistance != 0 && last != null) {
+             return position.getDouble(Position.KEY_DISTANCE) < filterDistance;
+         }
+@@ -133,6 +110,7 @@ public class FilterHandler extends BasePositionHandler {
+     }
+ 
+     private boolean filterMaxSpeed(Position position, Position last) {
++        int filterMaxSpeed = lookup(Keys.FILTER_MAX_SPEED, position.getDeviceId());
+         if (filterMaxSpeed != 0 && last != null) {
+             double distance = position.getDouble(Position.KEY_DISTANCE);
+             double time = position.getFixTime().getTime() - last.getFixTime().getTime();
+@@ -142,6 +120,7 @@ public class FilterHandler extends BasePositionHandler {
+     }
+ 
+     private boolean filterMinPeriod(Position position, Position last) {
++        long filterMinPeriod = lookup(Keys.FILTER_MIN_PERIOD, position.getDeviceId()) * 1000L;
+         if (filterMinPeriod != 0 && last != null) {
+             long time = position.getFixTime().getTime() - last.getFixTime().getTime();
+             return time > 0 && time < filterMinPeriod;
+@@ -151,6 +130,9 @@ public class FilterHandler extends BasePositionHandler {
+ 
+     private boolean filterDailyLimit(Position position, Position last) {
+         long deviceId = position.getDeviceId();
++        int filterDailyLimit = lookup(Keys.FILTER_DAILY_LIMIT, deviceId);
++        int globalDailyLimit = cacheManager.getConfig().getInteger(Keys.FILTER_GLOBAL_DAILY_LIMIT);
++        long filterDailyLimitInterval = lookup(Keys.FILTER_DAILY_LIMIT_INTERVAL, deviceId) * 1000L;
+         if ((filterDailyLimit != 0 && statisticsManager.messageStoredCount(deviceId) >= filterDailyLimit)
+                 || (globalDailyLimit > 0 && statisticsManager.messageStoredCount() >= globalDailyLimit)) {
+             long lastTime = last != null ? last.getFixTime().getTime() : 0;
+@@ -161,6 +143,7 @@ public class FilterHandler extends BasePositionHandler {
+     }
+ 
+     private boolean skipLimit(Position position, Position last) {
++        long skipLimit = lookup(Keys.FILTER_SKIP_LIMIT, position.getDeviceId()) * 1000;
+         if (skipLimit != 0 && last != null) {
+             return (position.getServerTime().getTime() - last.getServerTime().getTime()) > skipLimit;
+         }
+diff --git a/src/test/java/org/traccar/handler/FilterHandlerTest.java b/src/test/java/org/traccar/handler/FilterHandlerTest.java
+index 88660d9c3..a2bb1096d 100644
+--- a/src/test/java/org/traccar/handler/FilterHandlerTest.java
++++ b/src/test/java/org/traccar/handler/FilterHandlerTest.java
+@@ -1,61 +1,52 @@
+ package org.traccar.handler;
+ 
+-import org.junit.jupiter.api.BeforeEach;
+ import org.junit.jupiter.api.Test;
+ import org.traccar.BaseTest;
+ import org.traccar.config.Config;
+ import org.traccar.config.Keys;
+ import org.traccar.model.Device;
++import org.traccar.model.Group;
+ import org.traccar.model.Position;
+ import org.traccar.session.cache.CacheManager;
+ 
+ import java.util.Date;
++import java.util.Map;
+ 
+ import static org.junit.jupiter.api.Assertions.assertFalse;
+ import static org.junit.jupiter.api.Assertions.assertTrue;
+-import static org.mockito.ArgumentMatchers.any;
+ import static org.mockito.ArgumentMatchers.anyLong;
++import static org.mockito.ArgumentMatchers.eq;
+ import static org.mockito.Mockito.mock;
+ import static org.mockito.Mockito.when;
+ 
+ public class FilterHandlerTest extends BaseTest {
+ 
+-    private FilterHandler passingHandler;
+-    private FilterHandler filteringHandler;
+-
+-    @BeforeEach
+-    public void passingHandler() {
+-        var config = mock(Config.class);
+-        when(config.getBoolean(Keys.FILTER_ENABLE)).thenReturn(true);
++    private FilterHandler createHandler(Config config, Map<Long, Device> devices, Map<Long, Group> groups) {
+         var cacheManager = mock(CacheManager.class);
+         when(cacheManager.getConfig()).thenReturn(config);
+-        when(cacheManager.getObject(any(), anyLong())).thenReturn(mock(Device.class));
+-        passingHandler = new FilterHandler(config, cacheManager, null);
++        when(cacheManager.getObject(eq(Device.class), anyLong()))
++                .thenAnswer(invocation -> devices.get(invocation.<Long>getArgument(1)));
++        when(cacheManager.getObject(eq(Group.class), anyLong()))
++                .thenAnswer(invocation -> groups.get(invocation.<Long>getArgument(1)));
++        return new FilterHandler(cacheManager, null);
+     }
+ 
+-    @BeforeEach
+-    public void filteringHandler() {
+-        var config = mock(Config.class);
+-        when(config.getBoolean(Keys.FILTER_ENABLE)).thenReturn(true);
+-        when(config.getBoolean(Keys.FILTER_INVALID)).thenReturn(true);
+-        when(config.getBoolean(Keys.FILTER_ZERO)).thenReturn(true);
+-        when(config.getBoolean(Keys.FILTER_DUPLICATE)).thenReturn(true);
+-        when(config.getLong(Keys.FILTER_FUTURE)).thenReturn(5 * 60L);
+-        when(config.getBoolean(Keys.FILTER_APPROXIMATE)).thenReturn(true);
+-        when(config.getBoolean(Keys.FILTER_STATIC)).thenReturn(true);
+-        when(config.getInteger(Keys.FILTER_DISTANCE)).thenReturn(10);
+-        when(config.getInteger(Keys.FILTER_MAX_SPEED)).thenReturn(500);
+-        when(config.getLong(Keys.FILTER_SKIP_LIMIT)).thenReturn(10L);
+-        when(config.getString(Keys.FILTER_SKIP_ATTRIBUTES.getKey())).thenReturn("alarm,result");
+-        var cacheManager = mock(CacheManager.class);
+-        when(cacheManager.getConfig()).thenReturn(config);
+-        when(cacheManager.getObject(any(), anyLong())).thenReturn(mock(Device.class));
+-        filteringHandler = new FilterHandler(config, cacheManager, null);
++    private Device createDevice(long id, long groupId) {
++        var device = new Device();
++        device.setId(id);
++        device.setGroupId(groupId);
++        return device;
+     }
+ 
+-    private Position createPosition(Date time, boolean valid, double speed) {
++    private Group createGroup(long id) {
++        var group = new Group();
++        group.setId(id);
++        return group;
++    }
++
++    private Position createPosition(long deviceId, Date time, boolean valid, double speed) {
+         Position position = new Position();
+-        position.setDeviceId(0);
++        position.setDeviceId(deviceId);
+         position.setTime(time);
+         position.setValid(valid);
+         position.setLatitude(10);
+@@ -66,20 +57,42 @@ public class FilterHandlerTest extends BaseTest {
+         return position;
+     }
+ 
++    private Config createFilteringConfig() {
++        var config = new Config();
++        config.setString(Keys.FILTER_INVALID, "true");
++        config.setString(Keys.FILTER_ZERO, "true");
++        config.setString(Keys.FILTER_DUPLICATE, "true");
++        config.setString(Keys.FILTER_FUTURE, "300");
++        config.setString(Keys.FILTER_APPROXIMATE, "true");
++        config.setString(Keys.FILTER_STATIC, "true");
++        config.setString(Keys.FILTER_DISTANCE, "10");
++        config.setString(Keys.FILTER_MAX_SPEED, "500");
++        config.setString(Keys.FILTER_SKIP_LIMIT, "10");
++        config.setString(Keys.FILTER_SKIP_ATTRIBUTES, "alarm,result");
++        return config;
++    }
++
+     @Test
+     public void testFilter() {
+ 
+-        Position position = createPosition(new Date(), true, 10);
++        var filteringHandler = createHandler(createFilteringConfig(), Map.of(0L, createDevice(0, 0)), Map.of());
++
++        // every filter disabled: future and past are both 0
++        var passingConfig = new Config();
++        passingConfig.setString(Keys.FILTER_FUTURE, "0");
++        var passingHandler = createHandler(passingConfig, Map.of(0L, createDevice(0, 0)), Map.of());
++
++        Position position = createPosition(0, new Date(), true, 10);
+ 
+         assertFalse(filteringHandler.filter(position));
+         assertFalse(passingHandler.filter(position));
+ 
+-        position = createPosition(new Date(Long.MAX_VALUE), true, 10);
++        position = createPosition(0, new Date(Long.MAX_VALUE), true, 10);
+ 
+         assertTrue(filteringHandler.filter(position));
+         assertFalse(passingHandler.filter(position));
+ 
+-        position = createPosition(new Date(), false, 10);
++        position = createPosition(0, new Date(), false, 10);
+ 
+         assertTrue(filteringHandler.filter(position));
+         assertFalse(passingHandler.filter(position));
+@@ -89,11 +102,68 @@ public class FilterHandlerTest extends BaseTest {
+     @Test
+     public void testSkipAttributes() {
+ 
+-        Position position = createPosition(new Date(), true, 0);
++        var filteringHandler = createHandler(createFilteringConfig(), Map.of(0L, createDevice(0, 0)), Map.of());
++
++        Position position = createPosition(0, new Date(), true, 0);
+         position.addAlarm(Position.ALARM_GENERAL);
+ 
+         assertFalse(filteringHandler.filter(position));
+ 
+     }
+ 
++    @Test
++    public void testDefaultFutureFilter() {
++
++        // nothing configured: the future filter still uses its default of 86400 seconds
++        var handler = createHandler(new Config(), Map.of(0L, createDevice(0, 0)), Map.of());
++        assertTrue(handler.filter(createPosition(0, new Date(Long.MAX_VALUE), true, 10)));
++        assertFalse(handler.filter(createPosition(0, new Date(), true, 10)));
++
++        // a device setting of 0 disables the future filter for this device only
++        var device = createDevice(1, 0);
++        device.set(Keys.FILTER_FUTURE.getKey(), 0);
++        handler = createHandler(new Config(), Map.of(1L, device), Map.of());
++        assertFalse(handler.filter(createPosition(1, new Date(Long.MAX_VALUE), true, 10)));
++    }
++
++    @Test
++    public void testDeviceAttributeOverridesServerConfig() {
++
++        var config = new Config();
++        config.setString(Keys.FILTER_ZERO, "true");
++
++        var overridden = createDevice(1, 0);
++        overridden.set(Keys.FILTER_ZERO.getKey(), false);
++        var inherited = createDevice(2, 0);
++        var handler = createHandler(config, Map.of(1L, overridden, 2L, inherited), Map.of());
++
++        Position zeroPosition = createPosition(1, new Date(), true, 10);
++        zeroPosition.setLatitude(0);
++        zeroPosition.setLongitude(0);
++        assertFalse(handler.filter(zeroPosition));
++
++        zeroPosition = createPosition(2, new Date(), true, 10);
++        zeroPosition.setLatitude(0);
++        zeroPosition.setLongitude(0);
++        assertTrue(handler.filter(zeroPosition));
++    }
++
++    @Test
++    public void testGroupAttributeAndDeviceOverride() {
++
++        var group = createGroup(7);
++        group.set(Keys.FILTER_INVALID.getKey(), true);
++
++        var groupedDevice = createDevice(1, 7);
++        var overriddenDevice = createDevice(2, 7);
++        overriddenDevice.set(Keys.FILTER_INVALID.getKey(), false);
++        var ungroupedDevice = createDevice(3, 0);
++        var handler = createHandler(new Config(),
++                Map.of(1L, groupedDevice, 2L, overriddenDevice, 3L, ungroupedDevice), Map.of(7L, group));
++
++        assertTrue(handler.filter(createPosition(1, new Date(), false, 10)));
++        assertFalse(handler.filter(createPosition(2, new Date(), false, 10)));
++        assertFalse(handler.filter(createPosition(3, new Date(), false, 10)));
++    }
++
+ }

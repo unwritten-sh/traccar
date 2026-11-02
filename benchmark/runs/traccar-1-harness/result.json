@@ -1,0 +1,68 @@
+{
+  "task": "traccar-1",
+  "arm": "harness",
+  "start": "441e01045cc927fbcae1eca77dad54f1ccc9746d",
+  "seconds": 108,
+  "result": {
+    "status": "done",
+    "summary": "The JMAK text decoder now reads CAN bits 15 to 38 and stores them with the requested attribute names and types. Bit 17 uses Position.KEY_ENGINE_LOAD. The fuel unit field (bit 7) is no longer skipped. With unit \"L\" or no unit, the value goes to `fuel` (liters). With any other unit, it goes to `fuelLevel` (percentage). This changes the result for the existing real sample, which has unit \"P\": it now gives fuelLevel 80 instead of fuel 80. Tests cover all new fields and both fuel cases. `make check-fast` passes: Checkstyle is clean, 612 tests run, 0 failures, 27 skipped (these skips were already in the code). One limit: there is no real device message with bits 15 to 38, so I built the test message for those bits myself from the real header of an existing sample. The repository rules say decoder tests should use real device messages, so this message should be replaced with a real one.",
+    "changes": [
+      {
+        "path": "src/main/java/org/traccar/protocol/JmakProtocolDecoder.java",
+        "summary": "decodeCan: reads the fuel unit (bit 7) and stores bit 8 as fuel (unit L or absent) or fuelLevel (other unit); decodes bits 15-38 into the requested attributes (Double or Integer as specified, engine load via Position.KEY_ENGINE_LOAD)."
+      },
+      {
+        "path": "src/test/java/org/traccar/protocol/JmakProtocolDecoderTest.java",
+        "summary": "Existing real sample now checks fuelLevel=80 (unit P); new case with unit L checks fuel=80; new case with CAN mask 0x7FFFFFFFFF checks every attribute from bit 14 to 38 plus fuel."
+      },
+      {
+        "path": "docs/harness/log.md",
+        "summary": "Added an entry for this change, as AGENTS.md asks."
+      }
+    ],
+    "acceptance": [
+      {
+        "criterion": "A message with these CAN fields is decoded into the attributes above",
+        "met": true,
+        "evidence": "In JmakProtocolDecoderTest, a message with CAN mask 0000007FFFFFFFFF (bits 0-38) checks all 24 new attributes, each with its own value, so a field read out of order would fail. It passes."
+      },
+      {
+        "criterion": "The change is covered by tests",
+        "met": true,
+        "evidence": "New tests cover bits 15-38, fuel with unit L (fuel attribute) and fuel with unit P (fuelLevel attribute, real sample). `make test TESTS=org.traccar.protocol.JmakProtocolDecoderTest` passes. The bits 15-38 test message is synthetic, see human_needed."
+      },
+      {
+        "criterion": "The existing test suite still passes",
+        "met": true,
+        "evidence": "`make check-fast`: checkstyleMain and checkstyleTest are clean. Tests run: 612, Failures: 0, Errors: 0, Skipped: 27 (all skips were already in the code). BUILD SUCCESSFUL."
+      }
+    ],
+    "human_needed": [
+      {
+        "question": "Can you give a real JMAK message whose CAN block has bits 15-38 set, so it can replace the synthetic test message?",
+        "why": "AGENTS.md and the add-protocol-decoder skill say not to invent device samples. No real sample was available, so the bits 15-38 test uses a CAN block I built from the task's field list, on top of a real event block."
+      },
+      {
+        "question": "Is unit 'P' (and any other non-L unit) always a percentage? Is it correct that the existing sample now reports fuelLevel instead of fuel?",
+        "why": "The task rule says any unit that is not L means percentage, and I followed it. But it changes the output for the existing real sample, and other unit values (for example gallons) would also be stored as a percentage."
+      }
+    ],
+    "harness_used": [
+      "AGENTS.md/CLAUDE.md: the commands table (make test TESTS=..., make check-fast), the rule against invented samples, and the rule to add a log entry",
+      "add-protocol-decoder skill: workflow for changing a decoder, ProtocolTest helpers (position(Checks.ATTRIBUTES).attribute(...)), and the advice to use the standard Position.KEY_* keys",
+      "Makefile and tools/harness/java-home.sh: picked a working JDK automatically",
+      "tools/harness/test-summary.gradle: printed the test count for the evidence",
+      "docs/harness/log.md: format for the log entry"
+    ],
+    "harness_gaps": [
+      {
+        "file": ".agents/skills/add-protocol-decoder/SKILL.md",
+        "problem": "Step 1 says to stop and ask when there is no real sample. It does not say what to do when the task requires tests but gives no sample (as here). Guidance would help, for example: allow a synthetic sample built on a real one and flag it for review."
+      },
+      {
+        "file": null,
+        "problem": "There is no list of the JMAK protocol specification or device documentation, so the field order and units (for example, the possible fuel unit values) could not be checked against a source."
+      }
+    ]
+  }
+}

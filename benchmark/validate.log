@@ -1,0 +1,80 @@
+[19:51:26] validate 97b5e4063c Decode all JMAK CAN fields (#6100)
+[19:51:58]   valid=true
+[19:51:58] validate d5124e7f55 Add JMAK commands (#6095)
+[19:52:28]   valid=true
+[19:52:28] validate e61712226d Update JMAK text format decoding (#6096)
+[19:52:28]   valid=false error=error: could not revert e61712226... Update JMAK text format decoding (#6096)
+[19:52:28] validate 8c42bdcf79 Fix DualCam session interference (fix #6087)
+[19:52:39]   valid=false
+[19:52:39] validate 5ba3800ac5 Add Xexun3 protocol encoder (follow-up PR of #6063) (#6070)
+[19:53:10]   valid=true
+[19:53:10] validate 323cdae38f Handle invalid Minifinder frames
+[19:53:38]   valid=true
+[19:53:38] validate bdb7f6335c Add My Geocode (#6058)
+[19:53:50]   valid=false
+[19:53:50] validate 9b64401367 Enforce line separators
+[19:53:50]   valid=false error=error: could not revert 9b6440136... Enforce line separators
+[19:53:50] validate 0333aea165 Fix indentation issues
+[19:54:06]   valid=false
+[19:54:06] validate 1ea97a3c68 Support Teltonika Iridium protocol
+[19:54:39]   valid=true
+[19:54:39] validate e1564c7aaa Replace Queclink FRI regex parsing
+[19:54:40]   valid=false error=error: could not revert e1564c7aa... Replace Queclink FRI regex parsing
+[19:54:40] validate 523ef99ac9 Add GV350CEU CAN support
+[19:54:42]   valid=false error=error: could not revert 523ef99ac... Add GV350CEU CAN support
+[19:54:42] validate c3332bcc0d Fix IOTM sensor value decoding
+[19:54:43]   valid=false error=error: could not revert c3332bcc0... Fix IOTM sensor value decoding
+[19:54:43] validate caa134c2c1 Decode JT808 location query and parameter query responses (#5997)
+[19:54:43]   valid=false error=error: could not revert caa134c2c... Decode JT808 location query and parameter query responses (#5997)
+[19:54:43] validate cfee3e178e Add JT808 downlink command types (#5998)
+[19:54:44]   valid=false error=error: could not revert cfee3e178... Add JT808 downlink command types (#5998)
+[19:54:44] validate a1859cc8e2 Exclude fuel fillings and drains from reports
+[19:54:56]   valid=false
+[19:54:56] validate 64f9aadbe5 Support Akroz reports in TAIP protocol (#5984)
+[19:54:57]   valid=false error=error: could not revert 64f9aadbe... Support Akroz reports in TAIP protocol (#5984)
+[19:54:57] validate 68701664df Decode sensor and Bluetooth data
+[19:54:57]   valid=false error=error: could not revert 68701664d... Decode sensor and Bluetooth data
+[19:54:57] validate 9c62257e1b Add intersection for polyline geofences
+[19:55:20]   valid=false
+[19:55:20] validate 83cb935e4c Enable database result streaming
+[19:55:21]   valid=false error=error: could not revert 83cb935e4... Enable database result streaming
+[19:55:21] validate db5bb1ce12 Limit number of positions in reports
+[19:55:33]   valid=false
+[19:55:33] validate e1e0a2ccd8 Add Jimi 4G device status
+[19:55:33]   valid=false error=error: could not revert e1e0a2ccd... Add Jimi 4G device status
+[19:55:33] validate 35555d03ec Support GV500CNA binary format
+[19:55:34]   valid=false error=error: could not revert 35555d03e... Support GV500CNA binary format
+[19:55:34] validate 4e8b605bf7 Support R16H cell data
+[19:55:35]   valid=false error=error: could not revert 4e8b605bf... Support R16H cell data
+[19:55:35] validate 5d4d6205bc Fix TLD2-D driver behavior (fix #5556)
+[19:55:35]   valid=false error=error: could not revert 5d4d6205b... Fix TLD2-D driver behavior (fix #5556)
+[19:55:35] validate dc433af685 Add Jimi IoT upload handler
+[19:55:36]   valid=false error=error: could not revert dc433af68... Add Jimi IoT upload handler
+[19:55:36] validate 19a7910ba0 Support WMCS AM120 protocol
+[19:55:37]   valid=false error=error: could not revert 19a7910ba... Support WMCS AM120 protocol
+[19:55:37] validate ec6f359e14 Support Tzone TT19EX device (fix #5231)
+[19:55:38]   valid=false error=error: could not revert ec6f359e1... Support Tzone TT19EX device (fix #5231)
+[19:55:38] validate 19a0947d76 Implement MaxPB protocol (fix #4980)
+[19:55:38]   valid=false error=error: could not revert 19a0947d7... Implement MaxPB protocol (fix #4980)
+[19:55:38] validate 6918e9f8f5 Implement R16H protocol
+[19:55:39]   valid=false error=error: could not revert 6918e9f8f... Implement R16H protocol
+[19:55:39] validate 25a5bbb062 Add optimized attribute map
+[19:55:39]   valid=false error=error: could not revert 25a5bbb06... Add optimized attribute map
+[19:55:39] validate d2ed2c5c4d Use MethodHandle in storage layer
+[19:55:40]   valid=false error=error: could not revert d2ed2c5c4... Use MethodHandle in storage layer
+[19:55:40] validate 866681f897 Implement Radshid protocol (fix #5235)
+[19:55:41]   valid=false error=error: could not revert 866681f89... Implement Radshid protocol (fix #5235)
+[19:55:41] validate 7e880a7014 Add Xexun v03 protocol (fix #5835)
+[19:55:41]   valid=false error=error: could not revert 7e880a701... Add Xexun v03 protocol (fix #5835)
+[19:55:41] validate d8bd17b240 Extract computed attributes provider
+[19:55:42]   valid=false error=error: could not revert d8bd17b24... Extract computed attributes provider
+[19:55:42] validate 6d9f3e7c46 Add snap to road map matcher
+[19:55:43]   valid=false error=error: could not revert 6d9f3e7c4... Add snap to road map matcher
+[19:55:43] validate 152e0322bc Support HYN600 multiple locations
+[19:55:44]   valid=false error=error: could not revert 152e0322b... Support HYN600 multiple locations
+[19:55:44] validate 5c9d0449ce Add Jimi JC371/JC181/JC182/JC450/JC451 dashcam support to JT808 protocol (#5864)
+[19:55:45]   valid=false error=error: could not revert 5c9d0449c... Add Jimi JC371/JC181/JC182/JC450/JC451 dashcam support to JT808 protocol (#5864)
+[19:55:45] validate ade034b3e3 Cleanup Arnavi protocol
+[19:55:46]   valid=false error=error: could not revert ade034b3e... Cleanup Arnavi protocol
+[19:55:46] validate f20b2e68ab Refactor ArnaviBinaryProtocolDecoder constants and methods (#5795)
+[19:55:47]   valid=false error=error: could not revert f20b2e68a... Refactor ArnaviBinaryProtocolDecoder constants and methods (#5795)

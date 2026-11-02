@@ -1,0 +1,28 @@
+[21:19:50] validate 8fec46eb32 Support per device filter config
+[21:19:51]   valid=false error=error: could not revert 8fec46eb3... Support per device filter config
+[21:19:51] validate 9b4ea53a00 Remove preceding filtering option
+[21:19:51]   valid=false error=error: could not revert 9b4ea53a0... Remove preceding filtering option
+[21:19:51] validate 0de1dd59fd Improve trip start position
+[21:19:52]   valid=false error=error: could not revert 0de1dd59f... Improve trip start position
+[21:19:52] validate 66150f1e55 Improve KML/GPX exports
+[21:19:53]   valid=false error=error: could not revert 66150f1e5... Improve KML/GPX exports
+[21:19:53] validate 307437f668 Implement stop gap support
+[21:19:53]   valid=false error=error: could not revert 307437f66... Implement stop gap support
+[21:19:53] validate b26a339df1 Update motion logic
+[21:19:54]   valid=false error=error: could not revert b26a339df... Update motion logic
+[21:19:54] validate 5bced314f3 Add last motion event info
+[21:19:54]   valid=false error=error: could not revert 5bced314f... Add last motion event info
+[21:19:54] validate 171a48b8f7 New configuration parameters
+[21:19:55]   valid=false error=error: could not revert 171a48b8f... New configuration parameters
+[21:19:55] validate f4e0f87822 Handle motion edge cases
+[21:19:55]   valid=false error=error: could not revert f4e0f8782... Handle motion edge cases
+[21:19:55] validate e53803ba20 Add new motion processor
+[21:19:56]   valid=false error=error: could not revert e53803ba2... Add new motion processor
+[21:19:56] validate d23dd9df8f Upgrade calendar library
+[21:19:56]   valid=false error=error: could not revert d23dd9df8... Upgrade calendar library
+[21:19:56] validate 995a45ed66 Refactor geometry creation
+[21:19:57]   valid=false error=error: could not revert 995a45ed6... Refactor geometry creation
+[21:19:57] validate 63c63ec326 Unify fast and flow reports
+[21:19:57]   valid=false error=error: could not revert 63c63ec32... Unify fast and flow reports
+[21:19:57] validate 35d0b16020 Streaming in PositionResource
+[21:19:58]   valid=false error=error: could not revert 35d0b1602... Streaming in PositionResource

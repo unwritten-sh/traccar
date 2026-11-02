@@ -1,0 +1,86 @@
+{
+  "task": "traccar-3",
+  "arm": "control-haiku",
+  "start": "fb77c32a1744c0c3181efdaa96234cbb06f3e357",
+  "seconds": 214,
+  "result": {
+    "status": "done",
+    "summary": "Position filter settings (invalid, zero, duplicate, outdated, future, past, accuracy, approximate, static, distance, max speed, min period, daily limit, daily limit interval, skip limit) are now device keys. FilterHandler resolves each one per position through AttributeUtil.lookup (device attribute, then group chain, then server config, then key default), so a device or group attribute changes filtering for that device only. The constructor is now FilterHandler(CacheManager, StatisticsManager). The global daily limit stays server-only and is read from the cache manager's config per position. Full test suite passes (619 tests, 0 failures, 27 pre-existing skips), and checkstyle passes. Nothing was committed or pushed.",
+    "changes": [
+      {
+        "path": "src/main/java/org/traccar/config/Keys.java",
+        "summary": "Added KeyType.DEVICE to the 15 filter keys (FILTER_INVALID, ZERO, DUPLICATE, OUTDATED, FUTURE, PAST, ACCURACY, APPROXIMATE, STATIC, DISTANCE, MAX_SPEED, MIN_PERIOD, DAILY_LIMIT, DAILY_LIMIT_INTERVAL, SKIP_LIMIT). FILTER_GLOBAL_DAILY_LIMIT remains config-only."
+      },
+      {
+        "path": "src/main/java/org/traccar/handler/FilterHandler.java",
+        "summary": "Constructor now takes only CacheManager and StatisticsManager. Each filter setting is looked up per position for the position's device via AttributeUtil.lookup, with null-safe defaults for integer and boolean lookups. Global daily limit is read from cacheManager.getConfig() per position. Config import removed."
+      },
+      {
+        "path": "src/main/java/org/traccar/MainModule.java",
+        "summary": "provideFilterHandler now calls new FilterHandler(cacheManager, statisticsManager)."
+      },
+      {
+        "path": "src/test/java/org/traccar/handler/FilterHandlerTest.java",
+        "summary": "Rewritten on a real Config with real Device and Group objects. 9 tests cover defaults (future filter at 86400 s), server config applying to all devices, device attribute override (including false), group attribute inheritance, 0 disabling a filter, and per-device min period, accuracy, daily limit, and skip attributes."
+      }
+    ],
+    "acceptance": [
+      {
+        "criterion": "A filter setting on a device changes the filtering of that device only",
+        "met": true,
+        "evidence": "testDeviceAttributeOverridesServerConfig (invalid filter disabled on DEVICE_1 by attribute, still applied to DEVICE_2); testMinPeriodPerDevice; testAccuracyPerDevice; testDailyLimitPerDevice. All pass."
+      },
+      {
+        "criterion": "A filter setting on a group applies to member devices",
+        "met": true,
+        "evidence": "testGroupAttributeAppliesToMembers: group attribute filter.zero=false lets zero position pass for the member device, while the non-member device with server filter.zero=true is still filtered. Passes."
+      },
+      {
+        "criterion": "Lookup order is device attribute, then groups, then server config, then key default; default future filter is 86400 s when nothing is configured",
+        "met": true,
+        "evidence": "Handler uses AttributeUtil.lookup, the same lookup as other per-device settings. testDefaultsWithoutConfiguration asserts a far-future position is filtered with empty config. Passes."
+      },
+      {
+        "criterion": "A setting of 0 or false still disables that filter",
+        "met": true,
+        "evidence": "testZeroValueDisablesFilter (device filter.future=0 lets far-future position pass); testDeviceAttributeOverridesServerConfig (filter.invalid=false disables the filter)."
+      },
+      {
+        "criterion": "Constructor is new FilterHandler(cacheManager, statisticsManager)",
+        "met": true,
+        "evidence": "FilterHandler.java constructor signature; MainModule.provideFilterHandler updated; FilterHandlerTest uses the new constructor."
+      },
+      {
+        "criterion": "The change is covered by tests",
+        "met": true,
+        "evidence": "FilterHandlerTest has 9 tests, all passing (build/test-results: tests=9, failures=0)."
+      },
+      {
+        "criterion": "Existing test suite still passes",
+        "met": true,
+        "evidence": "./gradlew test --offline with JDK 21: 428 test classes, 619 tests, 0 failures, 0 errors, 27 skipped (pre-existing). checkstyleMain and checkstyleTest also pass."
+      }
+    ],
+    "human_needed": [],
+    "harness_used": [
+      "Bash (git diff, scripted Keys.java edit with a count check, Gradle build and test runs)",
+      "Read/Write/Edit for the changed files",
+      "Grep for FilterHandler and FILTER_ usages",
+      "Gradle tasks test, checkstyleMain, checkstyleTest"
+    ],
+    "harness_gaps": [
+      {
+        "file": "build.gradle / repository root",
+        "problem": "The default JDK on this machine is 17 and the build requires 21 ('invalid source release: 21'). Nothing in the repo points to this, so I had to find JDK 21 at /opt/homebrew/opt/openjdk@21 myself."
+      },
+      {
+        "file": "CLAUDE.md (repo)",
+        "problem": "The repo has no CLAUDE.md or agent files. The global CLAUDE.md references RTK.md, which is not in the repo; it only exists in the home config directory."
+      },
+      {
+        "file": "traccar-web / openapi.yaml",
+        "problem": "Not checked or updated. The new device-level filter attributes may not appear in the web UI attribute picker, so admins would need to set them through the generic attribute editor or the API. This is unverified."
+      }
+    ]
+  }
+}

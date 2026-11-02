@@ -1,0 +1,23 @@
+{
+  "task": "traccar-3",
+  "A": "harness",
+  "B": "control",
+  "answer": {
+    "A": {
+      "scope": 4,
+      "conventions": 4,
+      "tests": 5,
+      "readability": 4,
+      "notes": "Production code is correct. Each setting is resolved per position through AttributeUtil.lookup, and the keys are marked as DEVICE keys. A single generic lookupNumber(ConfigKey<? extends Number>) handles every numeric key. That works, but it is less typed than the rest of the codebase, and it reads ints as longs. Several methods (distance, maxSpeed, minPeriod, skipLimit) were reorganised so the lookup only runs when last != null. This is a small optimisation, but it makes the diff larger than needed. The test file was rewritten: @BeforeEach was removed and replaced with factory methods plus a shared mutable config map. The tests cover the default future value, a device attribute, a device overriding the config, a device disabling the future default, a group attribute with a device override, minPeriod per device and daily limit per device. Each test checks the other device for isolation, which gives broad coverage of the new behavior."
+    },
+    "B": {
+      "scope": 5,
+      "conventions": 4,
+      "tests": 4,
+      "readability": 5,
+      "notes": "Production code is the same in substance and has a smaller diff. There are typed lookupBoolean, lookupInteger and lookupLong helpers, and the existing if-structure is kept, with each value simply read from a local variable. It uses Objects.requireNonNullElse, but the diff adds no java.util.Objects import. It compiles only if FilterHandler already imports it, which this diff does not show. The existing test structure (@BeforeEach handlers) is kept, with a small mockConfig helper. Two tests were added: one for the default future value, and one combined test of server config, device override, group attribute and device-over-group priority. The coverage is good, but the combined test packs many cases into one method, and the throttling and period filters are not tested per device."
+    },
+    "merge_first": "A",
+    "why": "Both changes implement the same lookup and are equally correct in behavior. B is more minimal and slightly cleaner, but it relies on an Objects import that its diff never adds. A's tests are broader: they cover isolation per device for several kinds of filter, including minPeriod and dailyLimit, plus the cases for overriding the config and the default. A's rewrite of the test file is larger, but the extra confidence is worth that cost."
+  }
+}

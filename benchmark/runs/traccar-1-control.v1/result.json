@@ -1,0 +1,70 @@
+{
+  "task": "traccar-1",
+  "arm": "control",
+  "start": "9611a3a55133abce2d73f70cddac6bf95ad427da",
+  "seconds": 100,
+  "result": {
+    "status": "done",
+    "summary": "The JMAK text decoder now reads CAN bits 15 to 38 and stores them under the requested names and types. Bit 17 uses Position.KEY_ENGINE_LOAD. The fuel unit (bit 7) is no longer skipped: if the unit is \"L\" (any case) or missing, the value is stored as KEY_FUEL (liters); any other unit stores it as KEY_FUEL_LEVEL (percentage). One behavior change to note: the existing real sample sends unit \"P\" with fuel 80, so it now gives fuelLevel=80 and no longer fuel=80. I updated that test to check this. The JMAK test, checkstyle and the full suite pass (612 tests, 0 failures, 0 errors) under JDK 25. There is no real device message with bits 15 to 38, so the new test message is built by hand from the existing sample and the field order in the task.",
+    "changes": [
+      {
+        "path": "src/main/java/org/traccar/protocol/JmakProtocolDecoder.java",
+        "summary": "decodeCan: reads the fuel unit at bit 7 and stores bit 8 as fuel (L or no unit) or fuelLevel (any other unit); added decoding of bits 15-38 (tripFuelUsed ... instantFuelConsumption) with the requested types."
+      },
+      {
+        "path": "src/test/java/org/traccar/protocol/JmakProtocolDecoderTest.java",
+        "summary": "Added a message with CAN mask 7FFFFFFFFF that checks all 24 new attributes plus fuel in liters; added cases for unit 'L' and for no unit; the existing 'P;80' sample now checks fuelLevel=80."
+      }
+    ],
+    "acceptance": [
+      {
+        "criterion": "A message with these CAN fields is decoded into the attributes above",
+        "met": true,
+        "evidence": "New test message with CAN mask 0000007FFFFFFFFF checks every attribute from tripFuelUsed to instantFuelConsumption, including engineLoad and the integer fields pto, gear, dpfRegeneration and wiper. JmakProtocolDecoderTest passes."
+      },
+      {
+        "criterion": "The change is covered by tests",
+        "met": true,
+        "evidence": "JmakProtocolDecoderTest covers all of bits 15-38, fuel with unit L, fuel with no unit field, and the existing real sample with unit P giving fuelLevel."
+      },
+      {
+        "criterion": "The existing test suite still passes",
+        "met": true,
+        "evidence": "./gradlew test checkstyleMain checkstyleTest with JAVA_HOME=openjdk@25: exit 0, 429 result files, 612 tests, 0 failures, 0 errors."
+      }
+    ],
+    "human_needed": [
+      {
+        "question": "Can you share a real JMAK message that has CAN bits 15-38 set?",
+        "why": "The add-protocol-decoder skill says to test with real samples only. None was given, so the new test uses a message built by hand from the field order in the task. A real capture would confirm the field order and the number formats."
+      },
+      {
+        "question": "Is it correct that unit 'P' (seen in the existing real sample) means percentage, so fuel=80 becomes fuelLevel=80?",
+        "why": "This follows the stated rule ('any other unit' means fuel level), but it changes the output for devices already in the field."
+      }
+    ],
+    "harness_used": [
+      "add-protocol-decoder skill (test-first steps for an existing protocol, use standard Position KEY_* constants, run checkstyle)",
+      "Existing JmakProtocolDecoderTest real sample, which showed the unit field 'P' before fuel",
+      "Position.java standard keys (KEY_ENGINE_LOAD, KEY_FUEL, KEY_FUEL_LEVEL)"
+    ],
+    "harness_gaps": [
+      {
+        "file": ".claude/skills/add-protocol-decoder/SKILL.md",
+        "problem": "The skill refers to 'make test' and 'make check-fast', but this worktree has no Makefile. I used ./gradlew test and checkstyleMain/checkstyleTest instead."
+      },
+      {
+        "file": "build.gradle",
+        "problem": "The build needs JDK 21 or newer, but the default JAVA_HOME is JDK 17 ('invalid source release: 21'). Nothing in the repo says which JDK to use. I had to set JAVA_HOME=/opt/homebrew/opt/openjdk@25 myself."
+      },
+      {
+        "file": ".claude/skills/add-protocol-decoder/SKILL.md",
+        "problem": "It links docs/decisions/0002-one-netty-decoder-per-protocol.md, but this worktree has no docs/ folder or .claude/ folder. The skill was loaded from the main repo path."
+      },
+      {
+        "file": null,
+        "problem": "The skill says to stop and ask if there is no real sample, but in a non-interactive task that is not possible. I built the message by hand and listed the question under human_needed."
+      }
+    ]
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "task": "traccar-1",
+  "arm": "control-haiku",
+  "start": "a3813d7846a80745ec59db3d8db9703281c5687a",
+  "seconds": 101,
+  "result": {
+    "status": "done",
+    "summary": "The JMAK text decoder now reads CAN fields bits 15 to 38 in the specified order and stores them as position attributes with the given names and types. The fuel field at bit 8 now uses the unit field at bit 7: when the unit is \"L\" or absent it stores `fuel` (liters), otherwise it stores `fuelLevel` (percentage). Tests cover a full message with all new fields and a `%` unit, plus an \"L\" unit and a no-unit message. The Jmak tests pass, and the full suite passes with 428 test classes, 612 tests, 0 failures and 0 errors (27 skipped, which were already skipped). Nothing was committed or pushed.",
+    "changes": [
+      {
+        "path": "src/main/java/org/traccar/protocol/JmakProtocolDecoder.java",
+        "summary": "decodeCan: bit 7 now stores the fuel unit string instead of skipping it; bit 8 stores fuel as KEY_FUEL when the unit is null or \"L\", otherwise as KEY_FUEL_LEVEL. Added bits 15 to 38: decimal values as Double (tripFuelUsed, engineTorque, KEY_ENGINE_LOAD, fuelEconomy, oilPressure, brakePressure1/2, engineBrake, transmissionOilTemp/Pressure, boostPressure, intakeTemp, fuelTemp, adBlueLevel/Temp, scrPressure, dpfPressure, ambientTemperature, batteryVoltage, instantFuelConsumption) and integers as Integer (pto, gear, dpfRegeneration, wiper)."
+      },
+      {
+        "path": "src/test/java/org/traccar/protocol/JmakProtocolDecoderTest.java",
+        "summary": "Added three verifyDecode cases: a message with CAN mask 0x7FFFFF8180 (unit \"%\", bits 7, 8, 15 to 38) checking all 24 new attributes and fuelLevel; a message with unit \"L\" checking fuel; and a message with no unit checking fuel (absent unit means liters)."
+      }
+    ],
+    "acceptance": [
+      {
+        "criterion": "A message with the CAN fields (bits 15 to 38) is decoded into the specified attributes with the specified names and types",
+        "met": true,
+        "evidence": "JmakProtocolDecoderTest.testDecode full-message case asserts all 24 attributes (e.g. tripFuelUsed 1234.5 Double, engineLoad via KEY_ENGINE_LOAD 62.0, pto 1 Integer, gear 5 Integer, dpfRegeneration 1 Integer, wiper 2 Integer, instantFuelConsumption 18.4 Double) and passes."
+      },
+      {
+        "criterion": "Fuel unit handling: 'L' or absent keeps fuel in liters; any other unit stores fuelLevel",
+        "met": true,
+        "evidence": "Test with unit \"L\" asserts KEY_FUEL 120.5; test with no unit bit asserts KEY_FUEL 80.0; full-message test with unit \"%\" asserts KEY_FUEL_LEVEL 45.5. The first attempt failed only because my no-unit expectation was wrong (fuelLevel), which I corrected to fuel per the spec."
+      },
+      {
+        "criterion": "The change is covered by tests",
+        "met": true,
+        "evidence": "JmakProtocolDecoderTest now has 3 added verifyDecode cases covering bits 15 to 38, bit 7/8 unit routing, and the absent-unit path. Gradle: ./gradlew test --tests 'org.traccar.protocol.Jmak*' gives BUILD SUCCESSFUL, tests=1 failures=0 for JmakProtocolDecoderTest (other Jmak test classes also ran in the filtered run, 4 tests total, 0 failures)."
+      },
+      {
+        "criterion": "The existing test suite still passes",
+        "met": true,
+        "evidence": "./gradlew test --offline --rerun (JAVA_HOME=/opt/homebrew/opt/openjdk@21): BUILD SUCCESSFUL, EXIT=0; parsed 428 XML result files: 612 tests, 27 skipped, 0 failures, 0 errors."
+      },
+      {
+        "criterion": "No commit, no push, git history unchanged",
+        "met": true,
+        "evidence": "git status shows only the two modified files (M) as working-tree changes; no git commands that change history were run."
+      }
+    ],
+    "human_needed": [],
+    "harness_used": [
+      "Grep and Read to locate the JMAK decoder, its test, and Position key constants (Position.KEY_FUEL_LEVEL, KEY_ENGINE_LOAD)",
+      "ProtocolTest source inspection to confirm attribute comparison uses assertEquals on boxed values, so Integer vs Double types matter",
+      "Gradle wrapper (./gradlew test) for the filtered and full test runs"
+    ],
+    "harness_gaps": [
+      {
+        "file": null,
+        "problem": "The default `java` on this machine is JDK 17, but the project compiles with release 21, so the build failed until JAVA_HOME pointed at /opt/homebrew/opt/openjdk@21. Nothing in the repo documents this requirement for a local run."
+      },
+      {
+        "file": "CLAUDE.md (via @RTK.md)",
+        "problem": "The user's CLAUDE.md imports RTK.md, which was not present in the working directory, so no project-specific command conventions were available."
+      },
+      {
+        "file": null,
+        "problem": "No agent or workflow files in the repo. Assumption stated: the CAN unit field is bit 7 (the spec says 'just before' fuel at bit 8), and 'absent unit' means bit 7 is not set."
+      }
+    ]
+  }
+}

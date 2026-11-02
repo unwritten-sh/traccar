@@ -1,0 +1,206 @@
+[
+  {
+    "sha": "8fec46eb3235789d6717e3bca18d4532adeaf7e7",
+    "date": "2026-04-11",
+    "subject": "Support per device filter config",
+    "product": [
+      "src/main/java/org/traccar/MainModule.java",
+      "src/main/java/org/traccar/config/Keys.java",
+      "src/main/java/org/traccar/handler/FilterHandler.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/handler/FilterHandlerTest.java"
+    ],
+    "changed": 136
+  },
+  {
+    "sha": "9b4ea53a00ad2e36cd555d1514f1afe5c049c49d",
+    "date": "2026-04-11",
+    "subject": "Remove preceding filtering option",
+    "product": [
+      "src/main/java/org/traccar/MainModule.java",
+      "src/main/java/org/traccar/config/Keys.java",
+      "src/main/java/org/traccar/handler/FilterHandler.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/handler/FilterHandlerTest.java"
+    ],
+    "changed": 88
+  },
+  {
+    "sha": "0de1dd59fda58458ebf904d2e562542e36f4716c",
+    "date": "2026-03-11",
+    "subject": "Improve trip start position",
+    "product": [
+      "src/main/java/org/traccar/handler/DistanceHandler.java",
+      "src/main/java/org/traccar/helper/DistanceCalculator.java",
+      "src/main/java/org/traccar/session/state/NewMotionProcessor.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/session/state/NewMotionProcessorTest.java"
+    ],
+    "changed": 30
+  },
+  {
+    "sha": "66150f1e55b03f2e0ed5b49a3f2e215e29d03bb4",
+    "date": "2026-02-22",
+    "subject": "Improve KML/GPX exports",
+    "product": [
+      "src/main/java/org/traccar/api/resource/PositionResource.java",
+      "src/main/java/org/traccar/reports/CsvExportProvider.java",
+      "src/main/java/org/traccar/reports/GpxExportProvider.java",
+      "src/main/java/org/traccar/reports/KmlExportProvider.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/reports/GpxExportProviderTest.java",
+      "src/test/java/org/traccar/reports/KmlExportProviderTest.java"
+    ],
+    "changed": 143
+  },
+  {
+    "sha": "307437f6686b6b7a302a9753cc33c455fbad4452",
+    "date": "2026-01-26",
+    "subject": "Implement stop gap support",
+    "product": [
+      "src/main/java/org/traccar/config/Keys.java",
+      "src/main/java/org/traccar/handler/events/MotionEventHandler.java",
+      "src/main/java/org/traccar/session/state/NewMotionProcessor.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/session/state/NewMotionProcessorTest.java"
+    ],
+    "changed": 32
+  },
+  {
+    "sha": "b26a339df10903cdbafe78d188c026aaaba21a80",
+    "date": "2026-01-26",
+    "subject": "Update motion logic",
+    "product": [
+      "src/main/java/org/traccar/handler/events/MotionEventHandler.java",
+      "src/main/java/org/traccar/session/state/NewMotionProcessor.java",
+      "src/main/java/org/traccar/session/state/NewMotionState.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/session/state/NewMotionProcessorTest.java"
+    ],
+    "changed": 62
+  },
+  {
+    "sha": "5bced314f3c5105fe0f5f43358b839fa6084bdce",
+    "date": "2026-01-24",
+    "subject": "Add last motion event info",
+    "product": [
+      "src/main/java/org/traccar/handler/events/MotionEventHandler.java",
+      "src/main/java/org/traccar/session/state/NewMotionProcessor.java",
+      "src/main/java/org/traccar/session/state/NewMotionState.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/session/state/NewMotionProcessorTest.java"
+    ],
+    "changed": 52
+  },
+  {
+    "sha": "171a48b8f7ac9b43b01bfa318d2ef50a95dfe064",
+    "date": "2026-01-24",
+    "subject": "New configuration parameters",
+    "product": [
+      "src/main/java/org/traccar/config/Keys.java",
+      "src/main/java/org/traccar/handler/events/MotionEventHandler.java",
+      "src/main/java/org/traccar/session/state/NewMotionProcessor.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/session/state/NewMotionProcessorTest.java"
+    ],
+    "changed": 42
+  },
+  {
+    "sha": "f4e0f8782202c243ab33d23c350ae49c1589aba7",
+    "date": "2026-01-21",
+    "subject": "Handle motion edge cases",
+    "product": [
+      "src/main/java/org/traccar/session/state/NewMotionProcessor.java",
+      "src/main/java/org/traccar/session/state/NewMotionState.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/session/state/NewMotionProcessorTest.java"
+    ],
+    "changed": 38
+  },
+  {
+    "sha": "e53803ba202dade3e5a9625210ef2c2b0be57238",
+    "date": "2026-01-21",
+    "subject": "Add new motion processor",
+    "product": [
+      "src/main/java/org/traccar/session/state/NewMotionProcessor.java",
+      "src/main/java/org/traccar/session/state/NewMotionState.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/session/state/NewMotionProcessorTest.java"
+    ],
+    "changed": 82
+  },
+  {
+    "sha": "d23dd9df8f1fdcc7ea79a7460cd756a1f8079d26",
+    "date": "2025-08-09",
+    "subject": "Upgrade calendar library",
+    "product": [
+      "build.gradle",
+      "src/main/java/org/traccar/model/Calendar.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/calendar/CalendarTest.java"
+    ],
+    "changed": 37
+  },
+  {
+    "sha": "995a45ed668fba9b620f11dd9d67acc300335837",
+    "date": "2025-08-01",
+    "subject": "Refactor geometry creation",
+    "product": [
+      "src/main/java/org/traccar/config/Keys.java",
+      "src/main/java/org/traccar/geofence/GeofenceCircle.java",
+      "src/main/java/org/traccar/geofence/GeofenceGeometry.java",
+      "src/main/java/org/traccar/geofence/GeofencePolygon.java",
+      "src/main/java/org/traccar/geofence/GeofencePolyline.java",
+      "src/main/java/org/traccar/model/Geofence.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/geofence/GeofencePolylineTest.java"
+    ],
+    "changed": 119
+  },
+  {
+    "sha": "63c63ec3267f32cc329cc5d582be905122d4ba4e",
+    "date": "2025-07-25",
+    "subject": "Unify fast and flow reports",
+    "product": [
+      "src/main/java/org/traccar/handler/events/MotionEventHandler.java",
+      "src/main/java/org/traccar/helper/model/PositionUtil.java",
+      "src/main/java/org/traccar/model/Device.java",
+      "src/main/java/org/traccar/reports/SummaryReportProvider.java",
+      "src/main/java/org/traccar/reports/common/ReportUtils.java",
+      "src/main/java/org/traccar/session/state/MotionProcessor.java",
+      "src/main/java/org/traccar/session/state/MotionState.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/handler/events/MotionEventHandlerTest.java",
+      "src/test/java/org/traccar/reports/ReportUtilsTest.java"
+    ],
+    "changed": 183
+  },
+  {
+    "sha": "35d0b16020c76e7dd7ff668eb41dd1adf1468723",
+    "date": "2025-07-14",
+    "subject": "Streaming in PositionResource",
+    "product": [
+      "src/main/java/org/traccar/api/StreamWriter.java",
+      "src/main/java/org/traccar/api/resource/PositionResource.java",
+      "src/main/java/org/traccar/helper/model/PositionUtil.java",
+      "src/main/java/org/traccar/web/WebServer.java"
+    ],
+    "tests": [
+      "src/test/java/org/traccar/reports/ReportUtilsTest.java"
+    ],
+    "changed": 72
+  }
+]

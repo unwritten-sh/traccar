@@ -1,0 +1,35 @@
+{
+  "task": "traccar-3",
+  "arm": "harness-haiku",
+  "applied": true,
+  "apply_error": "",
+  "hidden": {
+    "code": 0,
+    "tests": {
+      "ran": 2,
+      "skipped": 0,
+      "failed": 0
+    },
+    "seconds": 2,
+    "tail": ""
+  },
+  "full": {
+    "code": 0,
+    "tests": {
+      "ran": 612,
+      "skipped": 27,
+      "failed": 0
+    },
+    "seconds": 18,
+    "tail": ""
+  },
+  "reference": {
+    "code": 0,
+    "tests": {
+      "ran": 612,
+      "skipped": 27,
+      "failed": 0
+    }
+  },
+  "solved": true
+}

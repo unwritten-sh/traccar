@@ -1,0 +1,518 @@
+[
+  {
+    "sha": "97b5e4063cbf4904d32e82cf4deb23a58fe4b7e0",
+    "subject": "Decode all JMAK CAN fields (#6100)",
+    "without": {
+      "code": 1,
+      "tests": {
+        "ran": 1,
+        "skipped": 0,
+        "failed": 1
+      }
+    },
+    "with": {
+      "code": 0,
+      "tests": {
+        "ran": 1,
+        "skipped": 0,
+        "failed": 0
+      },
+      "tail": ""
+    },
+    "valid": true,
+    "reference": {
+      "code": 0,
+      "tests": {
+        "ran": 612,
+        "skipped": 27,
+        "failed": 0
+      }
+    }
+  },
+  {
+    "sha": "d5124e7f550e2e2260c10a55a130f1e0fafef8bd",
+    "subject": "Add JMAK commands (#6095)",
+    "without": {
+      "code": 1,
+      "tests": null
+    },
+    "with": {
+      "code": 0,
+      "tests": {
+        "ran": 2,
+        "skipped": 0,
+        "failed": 0
+      },
+      "tail": ""
+    },
+    "valid": true,
+    "reference": {
+      "code": 0,
+      "tests": {
+        "ran": 610,
+        "skipped": 27,
+        "failed": 0
+      }
+    }
+  },
+  {
+    "sha": "e61712226d2d015913392b33b58fb2accdea998f",
+    "subject": "Update JMAK text format decoding (#6096)",
+    "valid": false,
+    "error": "error: could not revert e61712226... Update JMAK text format decoding (#6096)\nhint: after resolving the conflicts, mark the corrected paths\nhint: with 'git add <paths>' or 'git rm <paths>'\nhint: Disable this message with \"git config set advice.mergeConflict false\"\n"
+  },
+  {
+    "sha": "8c42bdcf79c137a0c02e1289b82f7314705140e3",
+    "subject": "Fix DualCam session interference (fix #6087)",
+    "without": {
+      "code": 1,
+      "tests": null
+    },
+    "with": {
+      "code": 1,
+      "tests": {
+        "ran": 0,
+        "skipped": 0,
+        "failed": 0
+      },
+      "tail": "> Task :protobufDummy UP-TO-DATE\n> Task :extractIncludeProto UP-TO-DATE\n> Task :extractProto UP-TO-DATE\n> Task :generateProto UP-TO-DATE\n> Task :compileJava\n> Task :processProtoResources UP-TO-DATE\n> Task :processResources UP-TO-DATE\n> Task :classes\n> Task :extractIncludeTestProto UP-TO-DATE\n> Task :extractTestProto UP-TO-DATE\n> Task :generateTestProto NO-SOURCE\n> Task :compileTestJava\n> Task :processTestProtoResources\n> Task :processTestResources NO-SOURCE\n> Task :testClasses\n\n> Task :test FAILED\nTests run: 0, Failures: 0, Errors: 0, Skipped: 0\n\n[Incubating] Problems report is available at: file:///Users/victor/Repos/unwritten/uw-harness-cases/traccar/bench/trees/validate/build/reports/problems/problems-report.html\n\nFAILURE: Build failed with an exception.\n\n* What went wrong:\nExecution failed for task ':test'.\n> No tests found for given includes: [org.traccar.BaseTest](--tests filter)\n\n* Try:\n> Run with --scan to get full insights from a Build Scan (powered by Develocity).\n\nDeprecated Gradle features were used in this build, making it incompatible with Gradle 10.\n\nYou can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.\n\nFor more on this, please refer to https://docs.gradle.org/9.8.2/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.\n11 actionable tasks: 4 executed, 7 up-to-date\n\nBUILD FAILED in 2s\n"
+    },
+    "valid": false
+  },
+  {
+    "sha": "5ba3800ac5c2f5c5cba2480aeeb9130f4575c966",
+    "subject": "Add Xexun3 protocol encoder (follow-up PR of #6063) (#6070)",
+    "without": {
+      "code": 1,
+      "tests": null
+    },
+    "with": {
+      "code": 0,
+      "tests": {
+        "ran": 1,
+        "skipped": 0,
+        "failed": 0
+      },
+      "tail": ""
+    },
+    "valid": true,
+    "reference": {
+      "code": 0,
+      "tests": {
+        "ran": 611,
+        "skipped": 27,
+        "failed": 0
+      }
+    }
+  },
+  {
+    "sha": "323cdae38fdf101ea13b97196cfbdcb259101ed7",
+    "subject": "Handle invalid Minifinder frames",
+    "without": {
+      "code": 1,
+      "tests": null
+    },
+    "with": {
+      "code": 0,
+      "tests": {
+        "ran": 1,
+        "skipped": 0,
+        "failed": 0
+      },
+      "tail": ""
+    },
+    "valid": true,
+    "reference": {
+      "code": 0,
+      "tests": {
+        "ran": 611,
+        "skipped": 27,
+        "failed": 0
+      }
+    }
+  },
+  {
+    "sha": "bdb7f6335cb4a75ec88fdcdc1a9de063b5497511",
+    "subject": "Add My Geocode (#6058)",
+    "without": {
+      "code": 1,
+      "tests": null
+    },
+    "with": {
+      "code": 0,
+      "tests": {
+        "ran": 18,
+        "skipped": 18,
+        "failed": 0
+      },
+      "tail": ""
+    },
+    "valid": false
+  },
+  {
+    "sha": "9b6440136704df21a542653a94dfacf2bcc4ec2c",
+    "subject": "Enforce line separators",
+    "valid": false,
+    "error": "error: could not revert 9b6440136... Enforce line separators\nhint: after resolving the conflicts, mark the corrected paths\nhint: with 'git add <paths>' or 'git rm <paths>'\nhint: Disable this message with \"git config set advice.mergeConflict false\"\n"
+  },
+  {
+    "sha": "0333aea165dcc3b716ee6bb7c5ad29bb06051be9",
+    "subject": "Fix indentation issues",
+    "without": {
+      "code": 0,
+      "tests": {
+        "ran": 22,
+        "skipped": 0,
+        "failed": 0
+      }
+    },
+    "with": {
+      "code": 1,
+      "tests": null,
+      "tail": " find symbol\n      public static final ConfigSuffix<Integer> PROTOCOL_PORT = new PortConfigSuffix(\n                                                                    ^\n    symbol:   class PortConfigSuffix\n    location: class Keys\n  /Users/victor/Repos/unwritten/uw-harness-cases/traccar/bench/trees/validate/src/main/java/org/traccar/ServerManager.java:62: error: cannot find symbol\n          Transport defaultTransport = Transport.valueOf(config.getString(Keys.PROTOCOLS_DEFAULT_TRANSPORT));\n                                                                              ^\n    symbol:   variable PROTOCOLS_DEFAULT_TRANSPORT\n    location: class Keys\n  Note: Some input files use or override a deprecated API.\n  Note: Recompile with -Xlint:deprecation for details.\n  Note: Some input files use unchecked or unsafe operations.\n  Note: Recompile with -Xlint:unchecked for details.\n  4 errors\n\n* Try:\n> Check your code and dependencies to fix the compilation error(s)\n> Run with --scan to get full insights from a Build Scan (powered by Develocity).\n\nDeprecated Gradle features were used in this build, making it incompatible with Gradle 10.\n\nYou can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.\n\nFor more on this, please refer to https://docs.gradle.org/9.8.2/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.\n\nBUILD FAILED in 2s\n4 actionable tasks: 1 executed, 3 up-to-date\n"
+    },
+    "valid": false
+  },
+  {
+    "sha": "1ea97a3c6828851043786297bd826b7096aa2043",
+    "subject": "Support Teltonika Iridium protocol",
+    "without": {
+      "code": 1,
+      "tests": null
+    },
+    "with": {
+      "code": 0,
+      "tests": {
+        "ran": 1,
+        "skipped": 0,
+        "failed": 0
+      },
+      "tail": ""
+    },
+    "valid": true,
+    "reference": {
+      "code": 0,
+      "tests": {
+        "ran": 611,
+        "skipped": 27,
+        "failed": 0
+      }
+    }
+  },
+  {
+    "sha": "e1564c7aaa877ff7d769d55ae053e7ae2076872e",
+    "subject": "Replace Queclink FRI regex parsing",
+    "valid": false,
+    "error": "error: could not revert e1564c7aa... Replace Queclink FRI regex parsing\nhint: after resolving the conflicts, mark the corrected paths\nhint: with 'git add <paths>' or 'git rm <paths>'\nhint: Disable this message with \"git config set advice.mergeConflict false\"\n"
+  },
+  {
+    "sha": "523ef99ac967c7adb638710cd4b6263ce043594d",
+    "subject": "Add GV350CEU CAN support",
+    "valid": false,
+    "error": "error: could not revert 523ef99ac... Add GV350CEU CAN support\nhint: after resolving the conflicts, mark the corrected paths\nhint: with 'git add <paths>' or 'git rm <paths>'\nhint: Disable this message with \"git config set advice.mergeConflict false\"\n"
+  },
+  {
+    "sha": "c3332bcc0d99f879b1461af89e9f618284754f09",
+    "subject": "Fix IOTM sensor value decoding",
+    "valid": false,
+    "error": "error: could not revert c3332bcc0... Fix IOTM sensor value decoding\nhint: after resolving the conflicts, mark the corrected paths\nhint: with 'git add <paths>' or 'git rm <paths>'\nhint: Disable this message with \"git config set advice.mergeConflict false\"\n"
+  },
+  {
+    "sha": "caa134c2c1f010d3c97609d856b9b86ea685159c",
+    "subject": "Decode JT808 location query and parameter query responses (#5997)",
+    "valid": false,
+    "error": "error: could not revert caa134c2c... Decode JT808 location query and parameter query responses (#5997)\nhint: after resolving the conflicts, mark the corrected paths\nhint: with 'git add <paths>' or 'git rm <paths>'\nhint: Disable this message with \"git config set advice.mergeConflict false\"\n"
+  },
+  {
+    "sha": "cfee3e178e0ec603000ff0f2348bf6e166b55f8c",
+    "subject": "Add JT808 downlink command types (#5998)",
+    "valid": false,
+    "error": "error: could not revert cfee3e178... Add JT808 downlink command types (#5998)\nhint: after resolving the conflicts, mark the corrected paths\nhint: with 'git add <paths>' or 'git rm <paths>'\nhint: Disable this message with \"git config set advice.mergeConflict false\"\n"
+  },
+  {
+    "sha": "a1859cc8e2b2e4ebe497f83408512c38b1de5cbb",
+    "subject": "Exclude fuel fillings and drains from reports",
+    "without": {
+      "code": 1,
+      "tests": null
+    },
+    "with": {
+      "code": 1,
+      "tests": null,
+      "tail": "ask ':compileJava' (registered by plugin class 'org.gradle.api.plugins.JavaBasePlugin').\n\n[Incubating] Problems report is available at: file:///Users/victor/Repos/unwritten/uw-harness-cases/traccar/bench/trees/validate/build/reports/problems/problems-report.html\n> Compilation failed; see the compiler output below.\n  /Users/victor/Repos/unwritten/uw-harness-cases/traccar/bench/trees/validate/src/main/java/org/traccar/reports/common/ReportUtils.java:359: error: method updateState in class NewMotionProcessor cannot be applied to given types;\n                      NewMotionProcessor.updateState(motionState, position, minDistance, minDuration, stopGap);\n                                        ^\n    required: NewMotionState,Position,double,long,long,boolean\n    found:    NewMotionState,Position,double,long,long\n    reason: actual and formal argument lists differ in length\n  1 error\n\n* Try:\n> Check your code and dependencies to fix the compilation error(s)\n> Run with --scan to get full insights from a Build Scan (powered by Develocity).\n\nDeprecated Gradle features were used in this build, making it incompatible with Gradle 10.\n\nYou can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.\n\nFor more on this, please refer to https://docs.gradle.org/9.8.2/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.\n\nBUILD FAILED in 1s\n4 actionable tasks: 1 executed, 3 up-to-date\n"
+    },
+    "valid": false
+  },
+  {
+    "sha": "64f9aadbe54f48c1acb6892dc0f6e031b9a3307d",
+    "subject": "Support Akroz reports in TAIP protocol (#5984)",
+    "valid": false,
+    "error": "error: could not revert 64f9aadbe... Support Akroz reports in TAIP protocol (#5984)\nhint: after resolving the conflicts, mark the corrected paths\nhint: with 'git add <paths>' or 'git rm <paths>'\nhint: Disable this message with \"git config set advice.mergeConflict false\"\n"
+  },
+  {
+    "sha": "68701664dfc134bc1b288ae57659da59c0db3c5c",
+    "subject": "Decode sensor and Bluetooth data",
+    "valid": false,
+    "error": "error: could not revert 68701664d... Decode sensor and Bluetooth data\nhint: after resolving the conflicts, mark the corrected paths\nhint: with 'git add <paths>' or 'git rm <paths>'\nhint: Disable this message with \"git config set advice.mergeConflict false\"\n"
+  },
+  {
+    "sha": "9c62257e1b2d106083571057f0b33be57b4ef61d",
+    "subject": "Add intersection for polyline geofences",
+    "without": {
+      "code": 1,
+      "tests": null
+    },
+    "with": {
+      "code": 0,
+      "tests": {
+        "ran": 6,
+        "skipped": 0,
+        "failed": 0
+      },
+      "tail": ""
+    },
+    "valid": false,
+    "reference": {
+      "code": 2,
+      "tests": null
+    }
+  },
+  {
+    "sha": "83cb935e4cb7e0bd4bb2dfbd72199e689518e45e",
+    "subject": "Enable database result streaming",
+    "valid": false,
+    "error": "error: could not revert 83cb935e4... Enable database result streaming\nhint: after resolving the conflicts, mark the corrected paths\nhint: with 'git add <paths>' or 'git rm <paths>'\nhint: Disable this message with \"git config set advice.mergeConflict false\"\n"
+  },
+  {
+    "sha": "db5bb1ce1277717b53849710cfd82d16f51520cf",
+    "subject": "Limit number of positions in reports",
+    "without": {
+      "code": 1,
+      "tests": null
+    },
+    "with": {
+      "code": 1,
+      "tests": null,
+      "tail": "        ^\n    symbol:   variable PROTOCOLS_DEFAULT_TRANSPORT\n    location: class Keys\n  /Users/victor/Repos/unwritten/uw-harness-cases/traccar/bench/trees/validate/src/main/java/org/traccar/reports/common/ReportUtils.java:333: error: method updateState in class NewMotionProcessor cannot be applied to given types;\n                      NewMotionProcessor.updateState(motionState, position, minDistance, minDuration, stopGap);\n                                        ^\n    required: NewMotionState,Position,double,long,long,boolean\n    found:    NewMotionState,Position,double,long,long\n    reason: actual and formal argument lists differ in length\n  Note: Some input files use or override a deprecated API.\n  Note: Recompile with -Xlint:deprecation for details.\n  Note: Some input files use unchecked or unsafe operations.\n  Note: Recompile with -Xlint:unchecked for details.\n  13 errors\n\n* Try:\n> Check your code and dependencies to fix the compilation error(s)\n> Run with --scan to get full insights from a Build Scan (powered by Develocity).\n\nDeprecated Gradle features were used in this build, making it incompatible with Gradle 10.\n\nYou can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.\n\nFor more on this, please refer to https://docs.gradle.org/9.8.2/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.\n\nBUILD FAILED in 1s\n4 actionable tasks: 1 executed, 3 up-to-date\n"
+    },
+    "valid": false
+  },
+  {
+    "sha": "e1e0a2ccd868f97aa2251efd9a4a3705442ca605",
+    "subject": "Add Jimi 4G device status",
+    "valid": false,
+    "error": "error: could not revert e1e0a2ccd... Add Jimi 4G device status\nhint: after resolving the conflicts, mark the corrected paths\nhint: with 'git add <paths>' or 'git rm <paths>'\nhint: Disable this message with \"git config set advice.mergeConflict false\"\n"
+  },
+  {
+    "sha": "35555d03ecb50cf46b1c376dfd9ea2132edd092b",
+    "subject": "Support GV500CNA binary format",
+    "valid": false,
+    "error": "error: could not revert 35555d03e... Support GV500CNA binary format\nhint: after resolving the conflicts, mark the corrected paths\nhint: with 'git add <paths>' or 'git rm <paths>'\nhint: Disable this message with \"git config set advice.mergeConflict false\"\n"
+  },
+  {
+    "sha": "4e8b605bf7d7c4584491b1095b3a87186ee0a9c7",
+    "subject": "Support R16H cell data",
+    "valid": false,
+    "error": "error: could not revert 4e8b605bf... Support R16H cell data\nhint: after resolving the conflicts, mark the corrected paths\nhint: with 'git add <paths>' or 'git rm <paths>'\nhint: Disable this message with \"git config set advice.mergeConflict false\"\n"
+  },
+  {
+    "sha": "5d4d6205bc62a0942132a4e55d8f5bb3eaaf741b",
+    "subject": "Fix TLD2-D driver behavior (fix #5556)",
+    "valid": false,
+    "error": "error: could not revert 5d4d6205b... Fix TLD2-D driver behavior (fix #5556)\nhint: after resolving the conflicts, mark the corrected paths\nhint: with 'git add <paths>' or 'git rm <paths>'\nhint: Disable this message with \"git config set advice.mergeConflict false\"\n"
+  },
+  {
+    "sha": "dc433af68560b43cc9766982bf9548e8bb1ef50c",
+    "subject": "Add Jimi IoT upload handler",
+    "valid": false,
+    "error": "error: could not revert dc433af68... Add Jimi IoT upload handler\nhint: after resolving the conflicts, mark the corrected paths\nhint: with 'git add <paths>' or 'git rm <paths>'\nhint: Disable this message with \"git config set advice.mergeConflict false\"\n"
+  },
+  {
+    "sha": "19a7910ba0ca12cacc0ccfdffc780ac7784d0ed0",
+    "subject": "Support WMCS AM120 protocol",
+    "valid": false,
+    "error": "error: could not revert 19a7910ba... Support WMCS AM120 protocol\nhint: after resolving the conflicts, mark the corrected paths\nhint: with 'git add <paths>' or 'git rm <paths>'\nhint: Disable this message with \"git config set advice.mergeConflict false\"\n"
+  },
+  {
+    "sha": "ec6f359e14b8012c2e51c124ea97b3136890fbed",
+    "subject": "Support Tzone TT19EX device (fix #5231)",
+    "valid": false,
+    "error": "error: could not revert ec6f359e1... Support Tzone TT19EX device (fix #5231)\nhint: after resolving the conflicts, mark the corrected paths\nhint: with 'git add <paths>' or 'git rm <paths>'\nhint: Disable this message with \"git config set advice.mergeConflict false\"\n"
+  },
+  {
+    "sha": "19a0947d765f955a75768294a7c003c1bd1464c9",
+    "subject": "Implement MaxPB protocol (fix #4980)",
+    "valid": false,
+    "error": "error: could not revert 19a0947d7... Implement MaxPB protocol (fix #4980)\nhint: after resolving the conflicts, mark the corrected paths\nhint: with 'git add <paths>' or 'git rm <paths>'\nhint: Disable this message with \"git config set advice.mergeConflict false\"\n"
+  },
+  {
+    "sha": "6918e9f8f5d44920a34569b514cb6c7e6e2966c1",
+    "subject": "Implement R16H protocol",
+    "valid": false,
+    "error": "error: could not revert 6918e9f8f... Implement R16H protocol\nhint: after resolving the conflicts, mark the corrected paths\nhint: with 'git add <paths>' or 'git rm <paths>'\nhint: Disable this message with \"git config set advice.mergeConflict false\"\n"
+  },
+  {
+    "sha": "25a5bbb062cd60766dd7ec227a8e36c0afa7a9f6",
+    "subject": "Add optimized attribute map",
+    "valid": false,
+    "error": "error: could not revert 25a5bbb06... Add optimized attribute map\nhint: after resolving the conflicts, mark the corrected paths\nhint: with 'git add <paths>' or 'git rm <paths>'\nhint: Disable this message with \"git config set advice.mergeConflict false\"\n"
+  },
+  {
+    "sha": "d2ed2c5c4da0a048d91dbb53c10bbc441c4007f3",
+    "subject": "Use MethodHandle in storage layer",
+    "valid": false,
+    "error": "error: could not revert d2ed2c5c4... Use MethodHandle in storage layer\nhint: after resolving the conflicts, mark the corrected paths\nhint: with 'git add <paths>' or 'git rm <paths>'\nhint: Disable this message with \"git config set advice.mergeConflict false\"\n"
+  },
+  {
+    "sha": "866681f897bf4056e31f8065a905c39a04bb70e6",
+    "subject": "Implement Radshid protocol (fix #5235)",
+    "valid": false,
+    "error": "error: could not revert 866681f89... Implement Radshid protocol (fix #5235)\nhint: after resolving the conflicts, mark the corrected paths\nhint: with 'git add <paths>' or 'git rm <paths>'\nhint: Disable this message with \"git config set advice.mergeConflict false\"\n"
+  },
+  {
+    "sha": "7e880a701475886ff0bd551fb07db829480004c9",
+    "subject": "Add Xexun v03 protocol (fix #5835)",
+    "valid": false,
+    "error": "error: could not revert 7e880a701... Add Xexun v03 protocol (fix #5835)\nhint: after resolving the conflicts, mark the corrected paths\nhint: with 'git add <paths>' or 'git rm <paths>'\nhint: Disable this message with \"git config set advice.mergeConflict false\"\n"
+  },
+  {
+    "sha": "d8bd17b2408a0973ad61efcf08408eccedda9195",
+    "subject": "Extract computed attributes provider",
+    "valid": false,
+    "error": "error: could not revert d8bd17b24... Extract computed attributes provider\nhint: after resolving the conflicts, mark the corrected paths\nhint: with 'git add <paths>' or 'git rm <paths>'\nhint: Disable this message with \"git config set advice.mergeConflict false\"\n"
+  },
+  {
+    "sha": "6d9f3e7c46477cd01872d0a7dac448e8ec6785d8",
+    "subject": "Add snap to road map matcher",
+    "valid": false,
+    "error": "error: could not revert 6d9f3e7c4... Add snap to road map matcher\nhint: after resolving the conflicts, mark the corrected paths\nhint: with 'git add <paths>' or 'git rm <paths>'\nhint: Disable this message with \"git config set advice.mergeConflict false\"\n"
+  },
+  {
+    "sha": "152e0322bc242dbb6c6c6e9d2b04aaafd9458a1b",
+    "subject": "Support HYN600 multiple locations",
+    "valid": false,
+    "error": "error: could not revert 152e0322b... Support HYN600 multiple locations\nhint: after resolving the conflicts, mark the corrected paths\nhint: with 'git add <paths>' or 'git rm <paths>'\nhint: Disable this message with \"git config set advice.mergeConflict false\"\n"
+  },
+  {
+    "sha": "5c9d0449ce0fcb8905edb49e2ef7a3868b1a0f97",
+    "subject": "Add Jimi JC371/JC181/JC182/JC450/JC451 dashcam support to JT808 protocol (#5864)",
+    "valid": false,
+    "error": "error: could not revert 5c9d0449c... Add Jimi JC371/JC181/JC182/JC450/JC451 dashcam support to JT808 protocol (#5864)\nhint: after resolving the conflicts, mark the corrected paths\nhint: with 'git add <paths>' or 'git rm <paths>'\nhint: Disable this message with \"git config set advice.mergeConflict false\"\n"
+  },
+  {
+    "sha": "ade034b3e3ec034cd6e59343d474c11db00192de",
+    "subject": "Cleanup Arnavi protocol",
+    "valid": false,
+    "error": "error: could not revert ade034b3e... Cleanup Arnavi protocol\nhint: after resolving the conflicts, mark the corrected paths\nhint: with 'git add <paths>' or 'git rm <paths>'\nhint: Disable this message with \"git config set advice.mergeConflict false\"\n"
+  },
+  {
+    "sha": "f20b2e68ab5b7ee37125ea5bacb1de7a2c281bb6",
+    "subject": "Refactor ArnaviBinaryProtocolDecoder constants and methods (#5795)",
+    "valid": false,
+    "error": "error: could not revert f20b2e68a... Refactor ArnaviBinaryProtocolDecoder constants and methods (#5795)\nhint: after resolving the conflicts, mark the corrected paths\nhint: with 'git add <paths>' or 'git rm <paths>'\nhint: Disable this message with \"git config set advice.mergeConflict false\"\n"
+  },
+  {
+    "sha": "9b4ea53a00ad2e36cd555d1514f1afe5c049c49d",
+    "subject": "Remove preceding filtering option",
+    "valid": false,
+    "error": "error: could not revert 9b4ea53a0... Remove preceding filtering option\nhint: after resolving the conflicts, mark the corrected paths\nhint: with 'git add <paths>' or 'git rm <paths>'\nhint: Disable this message with \"git config set advice.mergeConflict false\"\n"
+  },
+  {
+    "sha": "0de1dd59fda58458ebf904d2e562542e36f4716c",
+    "subject": "Improve trip start position",
+    "valid": false,
+    "error": "error: could not revert 0de1dd59f... Improve trip start position\nhint: after resolving the conflicts, mark the corrected paths\nhint: with 'git add <paths>' or 'git rm <paths>'\nhint: Disable this message with \"git config set advice.mergeConflict false\"\n"
+  },
+  {
+    "sha": "66150f1e55b03f2e0ed5b49a3f2e215e29d03bb4",
+    "subject": "Improve KML/GPX exports",
+    "valid": false,
+    "error": "error: could not revert 66150f1e5... Improve KML/GPX exports\nhint: after resolving the conflicts, mark the corrected paths\nhint: with 'git add <paths>' or 'git rm <paths>'\nhint: Disable this message with \"git config set advice.mergeConflict false\"\n"
+  },
+  {
+    "sha": "307437f6686b6b7a302a9753cc33c455fbad4452",
+    "subject": "Implement stop gap support",
+    "valid": false,
+    "error": "error: could not revert 307437f66... Implement stop gap support\nhint: after resolving the conflicts, mark the corrected paths\nhint: with 'git add <paths>' or 'git rm <paths>'\nhint: Disable this message with \"git config set advice.mergeConflict false\"\n"
+  },
+  {
+    "sha": "b26a339df10903cdbafe78d188c026aaaba21a80",
+    "subject": "Update motion logic",
+    "valid": false,
+    "error": "error: could not revert b26a339df... Update motion logic\nhint: after resolving the conflicts, mark the corrected paths\nhint: with 'git add <paths>' or 'git rm <paths>'\nhint: Disable this message with \"git config set advice.mergeConflict false\"\n"
+  },
+  {
+    "sha": "5bced314f3c5105fe0f5f43358b839fa6084bdce",
+    "subject": "Add last motion event info",
+    "valid": false,
+    "error": "error: could not revert 5bced314f... Add last motion event info\nhint: after resolving the conflicts, mark the corrected paths\nhint: with 'git add <paths>' or 'git rm <paths>'\nhint: Disable this message with \"git config set advice.mergeConflict false\"\n"
+  },
+  {
+    "sha": "171a48b8f7ac9b43b01bfa318d2ef50a95dfe064",
+    "subject": "New configuration parameters",
+    "valid": false,
+    "error": "error: could not revert 171a48b8f... New configuration parameters\nhint: after resolving the conflicts, mark the corrected paths\nhint: with 'git add <paths>' or 'git rm <paths>'\nhint: Disable this message with \"git config set advice.mergeConflict false\"\n"
+  },
+  {
+    "sha": "f4e0f8782202c243ab33d23c350ae49c1589aba7",
+    "subject": "Handle motion edge cases",
+    "valid": false,
+    "error": "error: could not revert f4e0f8782... Handle motion edge cases\nhint: after resolving the conflicts, mark the corrected paths\nhint: with 'git add <paths>' or 'git rm <paths>'\nhint: Disable this message with \"git config set advice.mergeConflict false\"\n"
+  },
+  {
+    "sha": "e53803ba202dade3e5a9625210ef2c2b0be57238",
+    "subject": "Add new motion processor",
+    "valid": false,
+    "error": "error: could not revert e53803ba2... Add new motion processor\nhint: after resolving the conflicts, mark the corrected paths\nhint: with 'git add <paths>' or 'git rm <paths>'\nhint: Disable this message with \"git config set advice.mergeConflict false\"\n"
+  },
+  {
+    "sha": "d23dd9df8f1fdcc7ea79a7460cd756a1f8079d26",
+    "subject": "Upgrade calendar library",
+    "valid": false,
+    "error": "error: could not revert d23dd9df8... Upgrade calendar library\nhint: after resolving the conflicts, mark the corrected paths\nhint: with 'git add <paths>' or 'git rm <paths>'\nhint: Disable this message with \"git config set advice.mergeConflict false\"\n"
+  },
+  {
+    "sha": "995a45ed668fba9b620f11dd9d67acc300335837",
+    "subject": "Refactor geometry creation",
+    "valid": false,
+    "error": "error: could not revert 995a45ed6... Refactor geometry creation\nhint: after resolving the conflicts, mark the corrected paths\nhint: with 'git add <paths>' or 'git rm <paths>'\nhint: Disable this message with \"git config set advice.mergeConflict false\"\n"
+  },
+  {
+    "sha": "63c63ec3267f32cc329cc5d582be905122d4ba4e",
+    "subject": "Unify fast and flow reports",
+    "valid": false,
+    "error": "error: could not revert 63c63ec32... Unify fast and flow reports\nhint: after resolving the conflicts, mark the corrected paths\nhint: with 'git add <paths>' or 'git rm <paths>'\nhint: Disable this message with \"git config set advice.mergeConflict false\"\n"
+  },
+  {
+    "sha": "35d0b16020c76e7dd7ff668eb41dd1adf1468723",
+    "subject": "Streaming in PositionResource",
+    "valid": false,
+    "error": "error: could not revert 35d0b1602... Streaming in PositionResource\nhint: after resolving the conflicts, mark the corrected paths\nhint: with 'git add <paths>' or 'git rm <paths>'\nhint: Disable this message with \"git config set advice.mergeConflict false\"\n"
+  },
+  {
+    "sha": "8fec46eb3235789d6717e3bca18d4532adeaf7e7",
+    "subject": "Support per device filter config",
+    "without": {
+      "code": 1,
+      "tests": null
+    },
+    "with": {
+      "code": 0,
+      "tests": {
+        "ran": 2,
+        "skipped": 0,
+        "failed": 0
+      },
+      "tail": ""
+    },
+    "valid": true,
+    "reference": {
+      "code": 0,
+      "tests": {
+        "ran": 612,
+        "skipped": 27,
+        "failed": 0
+      }
+    }
+  }
+]

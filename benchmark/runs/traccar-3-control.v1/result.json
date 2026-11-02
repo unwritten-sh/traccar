@@ -1,0 +1,68 @@
+{
+  "task": "traccar-3",
+  "arm": "control",
+  "start": "614c333918db90771819fe384ba88ae9dfaeedb0",
+  "seconds": 120,
+  "result": {
+    "status": "done",
+    "summary": "The 15 filter settings can now be set per device. Invalid, zero, duplicate, outdated, future, past, accuracy, approximate, static, distance, max speed, min period, daily limit, daily limit interval and skip limit are now marked as device keys (KeyType.CONFIG plus KeyType.DEVICE), so they can be set as device or group attributes. FilterHandler now takes only (cacheManager, statisticsManager). It looks up each setting when a position is processed, with AttributeUtil.lookup: device attribute, then its groups, then the server configuration, then the key default. A missing value counts as false or 0. A setting of 0 or false still turns its filter off, and filter.future still defaults to 86400 seconds. filter.globalDailyLimit stays a server-only setting and is now read from the configuration for each position. MainModule is updated to use the new constructor. Checkstyle and the full unit test suite pass: 428 test classes, 0 failures. Behaviour change: before, a mocked or empty config gave future = 0. Now the 86400 default applies, so the existing passing handler in the test sets filter.future=0 explicitly to stay passing.",
+    "changes": [
+      {
+        "path": "src/main/java/org/traccar/config/Keys.java",
+        "summary": "Added KeyType.DEVICE to the 15 filter keys listed in the task."
+      },
+      {
+        "path": "src/main/java/org/traccar/handler/FilterHandler.java",
+        "summary": "Removed the settings read once in the constructor; the constructor is now (CacheManager, StatisticsManager). Each filter looks up its setting for the device with AttributeUtil.lookup, through null-safe boolean and number helpers. The global daily limit is read from cacheManager.getConfig()."
+      },
+      {
+        "path": "src/main/java/org/traccar/MainModule.java",
+        "summary": "provideFilterHandler now calls new FilterHandler(cacheManager, statisticsManager)."
+      },
+      {
+        "path": "src/test/java/org/traccar/handler/FilterHandlerTest.java",
+        "summary": "Moved the tests to the new constructor and lookup-based config mocks. Added testDefaultFuture (the default of 86400 s filters a position far in the future when nothing is configured) and testDeviceAndGroupAttributes (a device attribute, an inherited group attribute and a device override of false or 0 each change filtering for that device only)."
+      }
+    ],
+    "acceptance": [
+      {
+        "criterion": "A filter setting on a device or group changes the filtering of that device only",
+        "met": true,
+        "evidence": "testDeviceAndGroupAttributes uses one handler for four devices: device 1 has no attributes and is not filtered; device 2 has filter.invalid=true and only its invalid positions are filtered; device 3 inherits filter.invalid and filter.future=300 from group 10 and is filtered by both; device 4 is in the same group but overrides with false and 0, and is not filtered."
+      },
+      {
+        "criterion": "The change is covered by tests",
+        "met": true,
+        "evidence": "FilterHandlerTest: 4 tests, 0 failures (build/test-results XML). Two of them are new: testDeviceAndGroupAttributes and testDefaultFuture."
+      },
+      {
+        "criterion": "The existing test suite still passes",
+        "met": true,
+        "evidence": "./gradlew checkstyleMain checkstyleTest test (with JDK 25) exited with code 0; 428 test result files, none with failures or errors."
+      }
+    ],
+    "human_needed": [],
+    "harness_used": [
+      "implement-change skill (workflow steps: test first, Keys.java Javadoc and style conventions, pointer that FilterHandlerTest mirrors FilterHandler)",
+      "Existing AttributeUtil.lookup and the FILTER_CALENDAR / FILTER_SKIP_ATTRIBUTES usage in FilterHandler, used as the pattern for per-device lookup"
+    ],
+    "harness_gaps": [
+      {
+        "file": "AGENTS.md",
+        "problem": "The implement-change skill says to read AGENTS.md, but this file does not exist in the worktree."
+      },
+      {
+        "file": "docs/architecture.md",
+        "problem": "Referenced by the skill but missing; docs/harness/log.md is missing too."
+      },
+      {
+        "file": "Makefile",
+        "problem": "The skill relies on make setup, make test TESTS=..., make check-fast and make check, but there is no Makefile. I used ./gradlew test and checkstyleMain/checkstyleTest directly."
+      },
+      {
+        "file": "build.gradle",
+        "problem": "The build needs JDK 21 or later, but the default JAVA_HOME is JDK 17, so the build failed with 'invalid source release: 21'. Nothing documents that; I had to set JAVA_HOME=/opt/homebrew/opt/openjdk@25 by hand."
+      }
+    ]
+  }
+}

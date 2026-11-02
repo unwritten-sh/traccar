@@ -1,0 +1,311 @@
+diff --git a/src/main/java/org/traccar/model/Command.java b/src/main/java/org/traccar/model/Command.java
+index 7b5788852..60d546d38 100644
+--- a/src/main/java/org/traccar/model/Command.java
++++ b/src/main/java/org/traccar/model/Command.java
+@@ -70,6 +70,7 @@ public class Command extends BaseCommand {
+     public static final String TYPE_ALARM_SPEED = "alarmSpeed";
+     public static final String TYPE_ALARM_FALL = "alarmFall";
+     public static final String TYPE_ALARM_VIBRATION = "alarmVibration";
++    public static final String TYPE_ALARM_MOVEMENT = "alarmMovement";
+ 
+     public static final String KEY_UNIQUE_ID = "uniqueId";
+     public static final String KEY_FREQUENCY = "frequency";
+diff --git a/src/main/java/org/traccar/protocol/JmakProtocol.java b/src/main/java/org/traccar/protocol/JmakProtocol.java
+index 7a1580354..49c78ba54 100644
+--- a/src/main/java/org/traccar/protocol/JmakProtocol.java
++++ b/src/main/java/org/traccar/protocol/JmakProtocol.java
+@@ -16,10 +16,12 @@
+ package org.traccar.protocol;
+ 
+ import io.netty.handler.codec.string.StringDecoder;
++import io.netty.handler.codec.string.StringEncoder;
+ import org.traccar.BaseProtocol;
+ import org.traccar.PipelineBuilder;
+ import org.traccar.TrackerServer;
+ import org.traccar.config.Config;
++import org.traccar.model.Command;
+ 
+ import jakarta.inject.Inject;
+ 
+@@ -27,11 +29,38 @@ public class JmakProtocol extends BaseProtocol {
+ 
+     @Inject
+     public JmakProtocol(Config config) {
++        setSupportedDataCommands(
++                Command.TYPE_ENGINE_STOP,
++                Command.TYPE_ENGINE_RESUME,
++                Command.TYPE_OUTPUT_CONTROL,
++                Command.TYPE_POSITION_PERIODIC,
++                Command.TYPE_SET_ODOMETER,
++                Command.TYPE_SET_CONNECTION,
++                Command.TYPE_REBOOT_DEVICE,
++                Command.TYPE_SET_SPEED_LIMIT,
++                Command.TYPE_ALARM_BATTERY,
++                Command.TYPE_ALARM_REMOVE,
++                Command.TYPE_ALARM_MOVEMENT);
++        setTextCommandEncoder(new JmakProtocolEncoder(this, true));
++        setSupportedTextCommands(
++                Command.TYPE_ENGINE_STOP,
++                Command.TYPE_ENGINE_RESUME,
++                Command.TYPE_OUTPUT_CONTROL,
++                Command.TYPE_POSITION_PERIODIC,
++                Command.TYPE_SET_ODOMETER,
++                Command.TYPE_SET_CONNECTION,
++                Command.TYPE_REBOOT_DEVICE,
++                Command.TYPE_SET_SPEED_LIMIT,
++                Command.TYPE_ALARM_BATTERY,
++                Command.TYPE_ALARM_REMOVE,
++                Command.TYPE_ALARM_MOVEMENT);
+         addServer(new TrackerServer(config, getName(), false) {
+             @Override
+             protected void addProtocolHandlers(PipelineBuilder pipeline, Config config) {
+                 pipeline.addLast(new JmakFrameDecoder());
+                 pipeline.addLast(new StringDecoder());
++                pipeline.addLast(new StringEncoder());
++                pipeline.addLast(new JmakProtocolEncoder(JmakProtocol.this, false));
+                 pipeline.addLast(new JmakProtocolDecoder(JmakProtocol.this));
+             }
+         });
+diff --git a/src/main/java/org/traccar/protocol/JmakProtocolEncoder.java b/src/main/java/org/traccar/protocol/JmakProtocolEncoder.java
+new file mode 100644
+index 000000000..83ad46607
+--- /dev/null
++++ b/src/main/java/org/traccar/protocol/JmakProtocolEncoder.java
+@@ -0,0 +1,137 @@
++/*
++ * Copyright 2026 Anton Tananaev (anton@traccar.org)
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++package org.traccar.protocol;
++
++import org.traccar.Protocol;
++import org.traccar.StringProtocolEncoder;
++import org.traccar.model.Command;
++
++import java.util.regex.Pattern;
++
++public class JmakProtocolEncoder extends StringProtocolEncoder {
++
++    private static final Pattern IPV4_PATTERN = Pattern.compile("\\d{1,3}(\\.\\d{1,3}){3}");
++
++    private static final int PARAM_REPORT_INTERVAL = 2;
++    private static final int PARAM_SERVER_PORT = 12;
++    private static final int PARAM_SERVER_IP = 13;
++    private static final int PARAM_OVERSPEED_EVENT = 16;
++    private static final int PARAM_OVERSPEED_LIMIT = 17;
++    private static final int PARAM_ODOMETER = 30;
++    private static final int PARAM_OUTPUT_1 = 34;
++    private static final int PARAM_SERVER_DOMAIN = 43;
++    private static final int PARAM_POWER_CUT_EVENT = 55;
++    private static final int PARAM_LOW_BATTERY_EVENT = 57;
++    private static final int PARAM_MOVEMENT_EVENT = 59;
++    private static final int PARAM_REBOOT = 93;
++    private static final int PARAM_OUTPUT_2 = 94;
++    private static final int PARAM_OUTPUT_3 = 167;
++
++    private static final String ACTION_SET = "s";
++    private static final String ACTION_EVENT = "e";
++
++    private record Parameter(String action, int id, String value) {
++    }
++
++    private final boolean textChannel;
++
++    public JmakProtocolEncoder(Protocol protocol, boolean textChannel) {
++        super(protocol);
++        this.textChannel = textChannel;
++    }
++
++    private static Parameter set(int id, Object value) {
++        return new Parameter(ACTION_SET, id, String.valueOf(value));
++    }
++
++    private static Parameter event(int id, Object value) {
++        return new Parameter(ACTION_EVENT, id, String.valueOf(value));
++    }
++
++    private static Integer outputParameter(int index) {
++        return switch (index) {
++            case 1 -> PARAM_OUTPUT_1;
++            case 2 -> PARAM_OUTPUT_2;
++            case 3 -> PARAM_OUTPUT_3;
++            default -> null;
++        };
++    }
++
++    private static int enableValue(Command command) {
++        return command.getBoolean(Command.KEY_ENABLE) ? 1 : 0;
++    }
++
++    private String encodeParameters(Parameter... parameters) {
++        StringBuilder builder = new StringBuilder();
++        if (textChannel) {
++            builder.append("JMAK#");
++            for (Parameter parameter : parameters) {
++                builder.append(parameter.action()).append(';')
++                        .append(parameter.id()).append(';')
++                        .append(parameter.value()).append('#');
++            }
++        } else {
++            builder.append('$');
++            for (int i = 0; i < parameters.length; i++) {
++                if (i > 0) {
++                    builder.append('|');
++                }
++                builder.append(parameters[i].id()).append(';')
++                        .append(parameters[i].value()).append(';');
++            }
++            builder.append('#');
++        }
++        return builder.toString();
++    }
++
++    private String encodeConnection(Command command) {
++        String server = command.getString(Command.KEY_SERVER);
++        Parameter address = IPV4_PATTERN.matcher(server).matches()
++                ? set(PARAM_SERVER_IP, server)
++                : set(PARAM_SERVER_DOMAIN, server);
++        return encodeParameters(address, set(PARAM_SERVER_PORT, command.getInteger(Command.KEY_PORT)));
++    }
++
++    @Override
++    protected Object encodeCommand(Command command) {
++
++        return switch (command.getType()) {
++            case Command.TYPE_ENGINE_STOP -> encodeParameters(set(PARAM_OUTPUT_1, 1));
++            case Command.TYPE_ENGINE_RESUME -> encodeParameters(set(PARAM_OUTPUT_1, 0));
++            case Command.TYPE_OUTPUT_CONTROL -> {
++                Integer parameter = outputParameter(command.getInteger(Command.KEY_INDEX));
++                yield parameter != null
++                        ? encodeParameters(set(parameter, command.getString(Command.KEY_DATA)))
++                        : null;
++            }
++            case Command.TYPE_POSITION_PERIODIC ->
++                    encodeParameters(set(PARAM_REPORT_INTERVAL, command.getInteger(Command.KEY_FREQUENCY)));
++            case Command.TYPE_SET_ODOMETER ->
++                    encodeParameters(set(PARAM_ODOMETER, command.getString(Command.KEY_DATA)));
++            case Command.TYPE_SET_CONNECTION -> encodeConnection(command);
++            case Command.TYPE_REBOOT_DEVICE -> textChannel ? "JMAK#REBOOT#" : encodeParameters(set(PARAM_REBOOT, 1));
++            case Command.TYPE_SET_SPEED_LIMIT -> encodeParameters(
++                    event(PARAM_OVERSPEED_EVENT, 1),
++                    set(PARAM_OVERSPEED_LIMIT, command.getString(Command.KEY_DATA)));
++            case Command.TYPE_ALARM_BATTERY -> encodeParameters(event(PARAM_LOW_BATTERY_EVENT, enableValue(command)));
++            case Command.TYPE_ALARM_REMOVE -> encodeParameters(event(PARAM_POWER_CUT_EVENT, enableValue(command)));
++            case Command.TYPE_ALARM_MOVEMENT ->
++                    encodeParameters(event(PARAM_MOVEMENT_EVENT, command.getString(Command.KEY_DATA)));
++            default -> null;
++        };
++    }
++
++}
+diff --git a/src/test/java/org/traccar/protocol/JmakProtocolEncoderTest.java b/src/test/java/org/traccar/protocol/JmakProtocolEncoderTest.java
+new file mode 100644
+index 000000000..2b3fc2ec2
+--- /dev/null
++++ b/src/test/java/org/traccar/protocol/JmakProtocolEncoderTest.java
+@@ -0,0 +1,94 @@
++package org.traccar.protocol;
++
++import org.junit.jupiter.api.Test;
++import org.traccar.ProtocolTest;
++import org.traccar.model.Command;
++
++public class JmakProtocolEncoderTest extends ProtocolTest {
++
++    private static Command command(String type, Object... attributes) {
++        Command command = new Command();
++        command.setDeviceId(1);
++        command.setType(type);
++        for (int i = 0; i < attributes.length; i += 2) {
++            String key = (String) attributes[i];
++            Object value = attributes[i + 1];
++            if (value instanceof Boolean booleanValue) {
++                command.set(key, booleanValue);
++            } else if (value instanceof Integer integerValue) {
++                command.set(key, integerValue);
++            } else {
++                command.set(key, (String) value);
++            }
++        }
++        return command;
++    }
++
++    @Test
++    public void testEncodeDataChannel() throws Exception {
++
++        var channel = channel(inject(new JmakProtocolEncoder(null, false)));
++
++        verifyEncode(channel, command(Command.TYPE_ENGINE_STOP), "$34;1;#");
++        verifyEncode(channel, command(Command.TYPE_ENGINE_RESUME), "$34;0;#");
++
++        verifyEncode(channel, command(Command.TYPE_OUTPUT_CONTROL, Command.KEY_INDEX, 1, Command.KEY_DATA, "1"), "$34;1;#");
++        verifyEncode(channel, command(Command.TYPE_OUTPUT_CONTROL, Command.KEY_INDEX, 2, Command.KEY_DATA, "0"), "$94;0;#");
++        verifyEncode(channel, command(Command.TYPE_OUTPUT_CONTROL, Command.KEY_INDEX, 3, Command.KEY_DATA, "1"), "$167;1;#");
++        verifyEncode(channel, command(Command.TYPE_POSITION_PERIODIC, Command.KEY_FREQUENCY, 60), "$2;60;#");
++
++        verifyEncode(channel, command(Command.TYPE_SET_ODOMETER, Command.KEY_DATA, "12345"), "$30;12345;#");
++
++        verifyEncode(channel, command(Command.TYPE_SET_CONNECTION, Command.KEY_SERVER, "jmak.com.br", Command.KEY_PORT, 5259),
++                "$43;jmak.com.br;|12;5259;#");
++        verifyEncode(channel, command(Command.TYPE_SET_CONNECTION, Command.KEY_SERVER, "191.233.246.121", Command.KEY_PORT, 5259),
++                "$13;191.233.246.121;|12;5259;#");
++
++        verifyEncode(channel, command(Command.TYPE_REBOOT_DEVICE), "$93;1;#");
++
++        verifyEncode(channel, command(Command.TYPE_SET_SPEED_LIMIT, Command.KEY_DATA, "80"), "$16;1;|17;80;#");
++
++        verifyEncode(channel, command(Command.TYPE_ALARM_BATTERY, Command.KEY_ENABLE, true), "$57;1;#");
++        verifyEncode(channel, command(Command.TYPE_ALARM_BATTERY, Command.KEY_ENABLE, false), "$57;0;#");
++
++        verifyEncode(channel, command(Command.TYPE_ALARM_REMOVE, Command.KEY_ENABLE, true), "$55;1;#");
++        verifyEncode(channel, command(Command.TYPE_ALARM_REMOVE, Command.KEY_ENABLE, false), "$55;0;#");
++
++        verifyEncode(channel, command(Command.TYPE_ALARM_MOVEMENT, Command.KEY_DATA, "1"), "$59;1;#");
++    }
++
++    @Test
++    public void testEncodeTextChannel() throws Exception {
++
++        var channel = channel(inject(new JmakProtocolEncoder(null, true)));
++
++        verifyEncode(channel, command(Command.TYPE_ENGINE_STOP), "JMAK#s;34;1#");
++        verifyEncode(channel, command(Command.TYPE_ENGINE_RESUME), "JMAK#s;34;0#");
++
++        verifyEncode(channel, command(Command.TYPE_OUTPUT_CONTROL, Command.KEY_INDEX, 1, Command.KEY_DATA, "1"), "JMAK#s;34;1#");
++        verifyEncode(channel, command(Command.TYPE_OUTPUT_CONTROL, Command.KEY_INDEX, 2, Command.KEY_DATA, "0"), "JMAK#s;94;0#");
++        verifyEncode(channel, command(Command.TYPE_OUTPUT_CONTROL, Command.KEY_INDEX, 3, Command.KEY_DATA, "1"), "JMAK#s;167;1#");
++
++        verifyEncode(channel, command(Command.TYPE_POSITION_PERIODIC, Command.KEY_FREQUENCY, 60), "JMAK#s;2;60#");
++
++        verifyEncode(channel, command(Command.TYPE_SET_ODOMETER, Command.KEY_DATA, "12345"), "JMAK#s;30;12345#");
++
++        verifyEncode(channel, command(Command.TYPE_SET_CONNECTION, Command.KEY_SERVER, "191.233.246.121", Command.KEY_PORT, 5259),
++                "JMAK#s;13;191.233.246.121#s;12;5259#");
++        verifyEncode(channel, command(Command.TYPE_SET_CONNECTION, Command.KEY_SERVER, "jmak.com.br", Command.KEY_PORT, 5259),
++                "JMAK#s;43;jmak.com.br#s;12;5259#");
++
++        verifyEncode(channel, command(Command.TYPE_REBOOT_DEVICE), "JMAK#REBOOT#");
++
++        verifyEncode(channel, command(Command.TYPE_SET_SPEED_LIMIT, Command.KEY_DATA, "80"), "JMAK#e;16;1#s;17;80#");
++
++        verifyEncode(channel, command(Command.TYPE_ALARM_BATTERY, Command.KEY_ENABLE, false), "JMAK#e;57;0#");
++        verifyEncode(channel, command(Command.TYPE_ALARM_BATTERY, Command.KEY_ENABLE, true), "JMAK#e;57;1#");
++
++        verifyEncode(channel, command(Command.TYPE_ALARM_REMOVE, Command.KEY_ENABLE, false), "JMAK#e;55;0#");
++        verifyEncode(channel, command(Command.TYPE_ALARM_REMOVE, Command.KEY_ENABLE, true), "JMAK#e;55;1#");
++
++        verifyEncode(channel, command(Command.TYPE_ALARM_MOVEMENT, Command.KEY_DATA, "1"), "JMAK#e;59;1#");
++    }
++
++}

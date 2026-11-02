@@ -1,0 +1,35 @@
+{
+  "task": "traccar-2",
+  "arm": "harness-haiku",
+  "applied": true,
+  "apply_error": "",
+  "hidden": {
+    "code": 1,
+    "tests": {
+      "ran": 2,
+      "skipped": 0,
+      "failed": 1
+    },
+    "seconds": 3,
+    "tail": "> Task :protobufDummy UP-TO-DATE\n> Task :extractIncludeProto UP-TO-DATE\n> Task :extractProto UP-TO-DATE\n> Task :generateProto UP-TO-DATE\n> Task :compileJava UP-TO-DATE\n> Task :processProtoResources UP-TO-DATE\n> Task :processResources UP-TO-DATE\n> Task :classes UP-TO-DATE\n> Task :extractIncludeTestProto UP-TO-DATE\n> Task :extractTestProto UP-TO-DATE\n> Task :generateTestProto NO-SOURCE\n> Task :compileTestJava UP-TO-DATE\n> Task :processTestProtoResources UP-TO-DATE\n> Task :processTestResources NO-SOURCE\n> Task :testClasses UP-TO-DATE\nOpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended\n\n> Task :test FAILED\n\nJmakProtocolEncoderTest > testEncode() FAILED\n    org.opentest4j.AssertionFailedError: message[0] ==> expected: <$34;1;#> but was: <UnpooledByteBufAllocator$InstrumentedUnpooledHeapByteBuf(ridx: 0, widx: 7, cap: 7)>\n        at app//org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:1210)\n        at app//org.traccar.ProtocolTest.verifyEncode(ProtocolTest.java:158)\n        at app//org.traccar.protocol.JmakProtocolEncoderTest.testEncode(JmakProtocolEncoderTest.java:18)\nTests run: 2, Failures: 1, Errors: 0, Skipped: 0\n\n[Incubating] Problems report is available at: file:///Users/victor/Repos/unwritten/uw-harness-cases/traccar/bench/trees/traccar-2-grade-harness-haiku/build/reports/problems/problems-report.html\n2 tests completed, 1 failed\n\n\nFAILURE: Build failed with an exception.\n\n* What went wrong:\nExecution failed for task ':test'.\n> There were failing tests. See the report at: file:///Users/victor/Repos/unwritten/uw-harness-cases/traccar/bench/trees/traccar-2-grade-harness-haiku/build/reports/tests/test/index.html\n\n* Try:\n> Run with --scan to get full insights from a Build Scan (powered by Develocity).\n\nDeprecated Gradle features were used in this build, making it incompatible with Gradle 10.\n\nYou can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.\n\nFor more on this, please refer to https://docs.gradle.org/9.8.2/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.\n\nBUILD FAILED in 2s\n11 actionable tasks: 1 executed, 10 up-to-date\n"
+  },
+  "full": {
+    "code": 2,
+    "tests": {
+      "ran": 612,
+      "skipped": 27,
+      "failed": 1
+    },
+    "seconds": 22,
+    "tail": "copyDependencies\n> Task :protobufDummy UP-TO-DATE\n> Task :extractIncludeProto\n> Task :extractProto\n> Task :generateProto\n\n> Task :compileJava\nNote: Some input files use or override a deprecated API.\nNote: Recompile with -Xlint:deprecation for details.\nNote: Some input files use unchecked or unsafe operations.\nNote: Recompile with -Xlint:unchecked for details.\n\n> Task :processProtoResources\n> Task :processResources\n> Task :classes\n> Task :jar\n> Task :assemble\n> Task :extractIncludeTestProto\n> Task :extractTestProto\n> Task :generateTestProto NO-SOURCE\n> Task :compileTestJava\n> Task :processTestProtoResources\n> Task :processTestResources NO-SOURCE\n> Task :testClasses\nOpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended\n\n> Task :test\n\nJmakProtocolEncoderTest > testEncode() FAILED\n    org.opentest4j.AssertionFailedError: message[0] ==> expected: <$34;1;#> but was: <UnpooledByteBufAllocator$InstrumentedUnpooledHeapByteBuf(ridx: 0, widx: 7, cap: 7)>\n        at app//org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:1210)\n        at app//org.traccar.ProtocolTest.verifyEncode(ProtocolTest.java:158)\n        at app//org.traccar.protocol.JmakProtocolEncoderTest.testEncode(JmakProtocolEncoderTest.java:18)\nTests run: 612, Failures: 1, Errors: 0, Skipped: 27\n\n612 tests completed, 1 failed, 27 skipped\n\n> Task :checkstyleTest\n> Task :test FAILED\n> Task :checkstyleMain\n\n[Incubating] Problems report is available at: file:///Users/victor/Repos/unwritten/uw-harness-cases/traccar/bench/trees/traccar-2-grade-harness-haiku/build/reports/problems/problems-report.html\n\nFAILURE: Build failed with an exception.\n\n* What went wrong:\nExecution failed for task ':test'.\n> There were failing tests. See the report at: file:///Users/victor/Repos/unwritten/uw-harness-cases/traccar/bench/trees/traccar-2-grade-harness-haiku/build/reports/tests/test/index.html\n\n* Try:\n> Run with --scan to get full insights from a Build Scan (powered by Develocity).\n\nDeprecated Gradle features were used in this build, making it incompatible with Gradle 10.\n\nYou can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.\n\nFor more on this, please refer to https://docs.gradle.org/9.8.2/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.\n15 actionable tasks: 15 executed\n\nBUILD FAILED in 21s\nmake: *** [check] Error 1\n"
+  },
+  "reference": {
+    "code": 0,
+    "tests": {
+      "ran": 610,
+      "skipped": 27,
+      "failed": 0
+    }
+  },
+  "solved": false
+}

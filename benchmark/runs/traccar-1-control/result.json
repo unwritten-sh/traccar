@@ -1,0 +1,53 @@
+{
+  "task": "traccar-1",
+  "arm": "control",
+  "start": "90b6901cb1a61fd7de509ad77fdd3a5e1a3c5dd3",
+  "seconds": 116,
+  "result": {
+    "status": "done",
+    "summary": "The JMAK text decoder now reads CAN bits 15 to 38 and stores them under the attribute names and types you gave. Bit 17 uses the standard engine load key, `engineLoad`. The fuel unit (bit 7) is no longer skipped: if it is \"L\", empty or absent, the value goes to `fuel` (liters); any other unit sends it to `fuelLevel` (percentage). This changes the result for one message already in the tests: its unit is \"P\", so its value 80 is now stored as fuelLevel, and the test checks this. I added two new tests. One has a full mask 0x7FFFFFFFFF with every field from bit 0 to 38 and checks all the new attributes. The other has only the fuel field and no unit, and checks that it is stored as fuel in liters. The full test suite passes (428 test classes, 612 tests, 0 failures) and checkstyle passes. To build, I had to set JAVA_HOME to JDK 25, because the default JDK 17 cannot compile a project that targets Java 21.",
+    "changes": [
+      {
+        "path": "src/main/java/org/traccar/protocol/JmakProtocolDecoder.java",
+        "summary": "decodeCan now reads the fuel unit (bit 7) and stores the fuel (bit 8) as fuel when the unit is L, empty or absent, and as fuelLevel for any other unit. It also decodes bits 15 to 38 into the requested attributes (decimal or integer as asked; bit 17 uses Position.KEY_ENGINE_LOAD)."
+      },
+      {
+        "path": "src/test/java/org/traccar/protocol/JmakProtocolDecoderTest.java",
+        "summary": "Existing message with unit P now checks fuelLevel=80. Added a message with no unit field that checks fuel=55.5, and a message with every CAN field from bit 0 to 38 that checks fuel, oilTemperature and all 24 new attributes."
+      }
+    ],
+    "acceptance": [
+      {
+        "criterion": "A message with these CAN fields is decoded into the attributes above",
+        "met": true,
+        "evidence": "The new test message has mask 0000007FFFFFFFFF. The test checks every attribute for bits 15 to 38 with its exact value and type (Double or Integer), and it passes."
+      },
+      {
+        "criterion": "The change is covered by tests",
+        "met": true,
+        "evidence": "JmakProtocolDecoderTest now tests all new CAN fields and both fuel unit cases (unit P gives fuelLevel, no unit gives fuel). Its result file shows failures=0 and errors=0."
+      },
+      {
+        "criterion": "The existing test suite still passes",
+        "met": true,
+        "evidence": "`./gradlew test checkstyleMain checkstyleTest --offline` (with JAVA_HOME set to JDK 25) printed BUILD SUCCESSFUL: 428 test result files, 612 tests, none with failures or errors."
+      }
+    ],
+    "human_needed": [],
+    "harness_used": [
+      "The existing JmakProtocolDecoderTest and ProtocolTest.PositionExpectation.attribute() let me check exact attribute values and types.",
+      "Position.java constants: KEY_ENGINE_LOAD, KEY_FUEL, KEY_FUEL_LEVEL.",
+      "The checkstyle tasks in Gradle (checkstyleTest found an extra blank line, which I removed)."
+    ],
+    "harness_gaps": [
+      {
+        "file": "build.gradle",
+        "problem": "The project targets Java 21, but the default JDK on this machine is 17, so the build fails with 'invalid source release: 21'. No agent instructions (CLAUDE.md or similar) say which JDK to use. I had to set JAVA_HOME=/opt/homebrew/opt/openjdk@25 myself."
+      },
+      {
+        "file": null,
+        "problem": "There is no protocol documentation or sample message for the new CAN fields (bits 15 to 38) or for the possible fuel unit values. I built the test message from the task description, not from a real device capture."
+      }
+    ]
+  }
+}

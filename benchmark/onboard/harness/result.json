@@ -1,0 +1,18 @@
+{
+  "arm": "harness",
+  "seconds": 40,
+  "result": {
+    "status": "done",
+    "test_command": "make test",
+    "setup_steps": [
+      "Read AGENTS.md/CLAUDE.md, Makefile and docs/local-dev.md",
+      "Checked the JDK: tools/harness/java-home.sh finds Homebrew openjdk@21 (/opt/homebrew/opt/openjdk@21), which matches .java-version 21",
+      "The Gradle wrapper (9.8.2) and the dependency cache in ~/.gradle were already present, and Maven Central was reachable",
+      "Ran `make hooks` (git config core.hooksPath .githooks)",
+      "Ran `make test` (./gradlew test --rerun with the harness test-summary init script): compile, then the unit tests",
+      "Did not start a database: the unit tests need no outside service (H2/in-memory and mocks); `make db-up` is only for running the server against PostgreSQL/MySQL"
+    ],
+    "summary": "The environment works with JDK 21 (Homebrew openjdk@21, selected automatically by the Makefile) and the Gradle wrapper. `make test` builds the code and runs the unit tests: 612 tests, 0 failures, 0 errors, 27 skipped, BUILD SUCCESSFUL in about 17 s. The skipped tests are marked @Disabled in the source (they need outside services such as geocoders, geolocation, mail and map matching), so my environment is not the cause. No services had to be started. No product code or tests were changed. The working tree is still clean; the only change is the local git setting core.hooksPath=.githooks. `make check-fast` adds Checkstyle on top of these tests, and `make check` is the full CI gate.",
+    "human_needed": []
+  }
+}

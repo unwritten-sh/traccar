@@ -1,0 +1,76 @@
+{
+  "task": "traccar-1",
+  "arm": "harness-haiku",
+  "start": "064c11665afe1ae560f597fa4be3eb7b6e1a753c",
+  "seconds": 101,
+  "result": {
+    "status": "done",
+    "summary": "The JMAK decoder now reads CAN bits 15 to 38 into the requested attributes, and the fuel unit at bit 7 controls whether bit 8 is stored as liters (`fuel`) or as a percentage (`fuelLevel`). Two decoder tests pass, and the fast gate passes with 613 tests and 0 failures. The new test uses a synthetic CAN block, not a real device capture, because the repo has no real sample with these fields. Nothing was committed or pushed.",
+    "changes": [
+      {
+        "path": "src/main/java/org/traccar/protocol/JmakProtocolDecoder.java",
+        "summary": "decodeCan: bit 7 stores the fuel unit string instead of skipping it; bit 8 stores fuel as KEY_FUEL when the unit is absent or \"L\", otherwise as KEY_FUEL_LEVEL. Added bits 15 to 38 in order: decimal fields as Double.parseDouble, integer fields (pto, gear, dpfRegeneration, wiper) as Integer.parseInt; engine load uses Position.KEY_ENGINE_LOAD (\"engineLoad\")."
+      },
+      {
+        "path": "src/test/java/org/traccar/protocol/JmakProtocolDecoderTest.java",
+        "summary": "Added testDecodeCanExtendedFields: a message with unit \"L\" and all 24 new fields checked by value, a message with unit \"%\" checked for fuelLevel, and a message with no unit checked for fuel. The CAN values are synthetic and marked as such in a comment."
+      },
+      {
+        "path": "docs/harness/log.md",
+        "summary": "Appended a dated entry (2026-11-02) describing the change, the gate results, and what is left (no real device sample, make check not run)."
+      }
+    ],
+    "acceptance": [
+      {
+        "criterion": "A message with these CAN fields is decoded into the attributes above (bits 15 to 38 with the given names and types)",
+        "met": true,
+        "evidence": "JmakProtocolDecoderTest.testDecodeCanExtendedFields passes; it asserts all 24 attributes by value with the given names, and integer fields are asserted as Integer. ProtocolTest line 428 compares each expected attribute with assertEquals."
+      },
+      {
+        "criterion": "Fuel unit handling: \"L\" or absent keeps fuel in liters; any other unit stores the value as fuelLevel",
+        "met": true,
+        "evidence": "Test case with unit \"%\" asserts KEY_FUEL_LEVEL = 63.0; test case with bit 7 absent asserts KEY_FUEL = 120.5; test case with unit \"L\" asserts KEY_FUEL = 120.5."
+      },
+      {
+        "criterion": "The change is covered by tests",
+        "met": true,
+        "evidence": "New test method testDecodeCanExtendedFields in JmakProtocolDecoderTest; make test TESTS=org.traccar.protocol.JmakProtocolDecoderTest reports Tests run: 2, Failures: 0, Errors: 0."
+      },
+      {
+        "criterion": "The existing test suite still passes",
+        "met": true,
+        "evidence": "make check-fast: Tests run: 613, Failures: 0, Errors: 0, Skipped: 27 (612 before plus the new test); checkstyleMain and checkstyleTest pass; BUILD SUCCESSFUL. make check (full gate) was not run."
+      }
+    ],
+    "human_needed": [
+      {
+        "question": "Can you provide a real JMAK text message that includes CAN bits 15 to 38 (and the fuel unit at bit 7) from a device or its documentation?",
+        "why": "AGENTS.md forbids inventing decoder test samples. The new test uses synthetic values built from the field order, so it checks the mapping but not real device data. It should be replaced with a real capture when one is available."
+      },
+      {
+        "question": "Is the fuel unit string at bit 7 exactly \"L\" for liters, and are there other unit values the devices send (for example \"%\")?",
+        "why": "The task only names \"L\" and says any other unit is a percentage. The repo has no JMAK documentation for this field, so the mapping follows the task text."
+      }
+    ],
+    "harness_used": [
+      "AGENTS.md (commands, conventions, verification steps, log requirement)",
+      "implement-change skill (SKILL.md read for the workflow)",
+      "make test TESTS=... and make check-fast",
+      "docs/harness/log.md (format for the change entry)"
+    ],
+    "harness_gaps": [
+      {
+        "file": "AGENTS.md",
+        "problem": "It forbids inventing decoder test samples, but the task requires tests for CAN fields that no real capture in the repo covers. There is no documented rule for what to do in this case; I used a synthetic message and flagged it."
+      },
+      {
+        "file": "src/main/java/org/traccar/protocol/JmakProtocolDecoder.java",
+        "problem": "The repo has no documentation of the JMAK CAN field layout or units (no device docs or sample with bits above 14), so the field types and the fuel unit rule rely only on the task text."
+      },
+      {
+        "file": "docs/harness/brief.md",
+        "problem": "Open question on whether protocol changes always need a real device sample is still unresolved in CONTRIBUTING.md, so the definition of done for this change is unclear."
+      }
+    ]
+  }
+}

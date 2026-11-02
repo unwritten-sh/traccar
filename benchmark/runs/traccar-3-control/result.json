@@ -1,0 +1,61 @@
+{
+  "task": "traccar-3",
+  "arm": "control",
+  "start": "cb74797c8a4080c6163a2678188feda094774092",
+  "seconds": 142,
+  "result": {
+    "status": "done",
+    "summary": "The 15 filter settings you listed are now device keys (KeyType.CONFIG plus KeyType.DEVICE), so they can be set on a device or a group. FilterHandler now resolves each setting for the position's device with AttributeUtil.lookup: the device attribute first, then its groups, then the server configuration, then the key default. With nothing configured, filter.future still filters positions more than 86400 s in the future. A value of 0 or false still disables a filter. The constructor is now FilterHandler(CacheManager, StatisticsManager), and MainModule was updated to match. filter.globalDailyLimit was not in your list, so it is still server-only: it is read from cacheManager.getConfig() for each position. The full test suite passes (614 tests, 0 failures) and checkstyleMain/checkstyleTest pass, run with JDK 25 because the project needs Java 21 or newer.",
+    "changes": [
+      {
+        "path": "src/main/java/org/traccar/config/Keys.java",
+        "summary": "Added KeyType.DEVICE to filter.invalid, zero, duplicate, outdated, future, past, accuracy, approximate, static, distance, maxSpeed, minPeriod, dailyLimit, dailyLimitInterval and skipLimit."
+      },
+      {
+        "path": "src/main/java/org/traccar/handler/FilterHandler.java",
+        "summary": "Removed the Config constructor parameter and the cached fields. Each filter now resolves its setting for the position's device through AttributeUtil.lookup; a missing value with no default means disabled (false or 0). The global daily limit is read from the server configuration for each position."
+      },
+      {
+        "path": "src/main/java/org/traccar/MainModule.java",
+        "summary": "provideFilterHandler now calls new FilterHandler(cacheManager, statisticsManager)."
+      },
+      {
+        "path": "src/test/java/org/traccar/handler/FilterHandlerTest.java",
+        "summary": "Updated to the new constructor; the config mock now stubs getString, which is what lookup reads. The passing handler now sets filter.future=0, because the default now applies. Added testDefaultFuture (the 86400 s default) and testDeviceAndGroupSettings: the server config applies to a device without attributes; device attributes disable invalid and future filtering for that device only; a group attribute enables static filtering for its devices; a device attribute takes priority over its group."
+      }
+    ],
+    "acceptance": [
+      {
+        "criterion": "A filter setting on a device or group changes the filtering of that device only",
+        "met": true,
+        "evidence": "In testDeviceAndGroupSettings, device 1 (no attributes) is still filtered by the server config. Device 2 sets filter.invalid=false and filter.future=0, and its invalid and future positions pass. The group of devices 3 and 4 sets filter.static=true, so device 3 drops static positions. Device 4 sets filter.static=false on itself, which overrides the group."
+      },
+      {
+        "criterion": "The change is covered by tests",
+        "met": true,
+        "evidence": "Added FilterHandlerTest.testDeviceAndGroupSettings and testDefaultFuture; both pass."
+      },
+      {
+        "criterion": "The existing test suite still passes",
+        "met": true,
+        "evidence": "./gradlew test checkstyleMain checkstyleTest with JAVA_HOME=openjdk@25: 614 tests, 0 failures/errors, checkstyle clean."
+      }
+    ],
+    "human_needed": [],
+    "harness_used": [
+      "Existing FilterHandlerTest and the Mockito/JUnit setup",
+      "AttributeUtil.lookup, the existing per-device lookup (already used by filter.calendar and filter.skipAttributes)",
+      "Gradle test and checkstyle tasks"
+    ],
+    "harness_gaps": [
+      {
+        "file": null,
+        "problem": "The repository has no agent instructions (CLAUDE.md or AGENTS.md) and no note on the required JDK. The default JDK 17 fails with 'invalid source release: 21'; I had to find openjdk@25 myself."
+      },
+      {
+        "file": "src/test/java/org/traccar/handler/FilterHandlerTest.java",
+        "problem": "The old test stubbed typed Config getters (getBoolean/getLong). AttributeUtil.lookup reads config.getString, so after the change those stubs had no effect and every test had to be moved to getString stubs."
+      }
+    ]
+  }
+}
